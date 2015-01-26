@@ -322,13 +322,15 @@ inline void ProxyPushSupplier_i::trigger(bool& busy, bool& waiting)
       // Shut down the connection
       CORBA::Exception* ex =env->exception(); // No need to free exception.
       DB(10,"ProxyPushSupplier got exception" IF_OMNIORB4(": "<<ex->_name()) );
-      Orb::inst().reportObjectFailure(HERE,_target.in(),ex);
-      _req=CORBA::Request::_nil();
+      if (!CORBA::is_nil(_target)) {
+        Orb::inst().reportObjectFailure(HERE,_target.in(),ex);
+        _req=CORBA::Request::_nil();
 
-      // Try to notify the Consumer that the connection is closing.
-      CORBA::Request_var req=_target->_request("disconnect_push_consumer");
-      req->send_deferred();
-      Orb::inst().deferredRequest(req._retn());
+        // Try to notify the Consumer that the connection is closing.
+        CORBA::Request_var req=_target->_request("disconnect_push_consumer");
+        req->send_deferred();
+        Orb::inst().deferredRequest(req._retn());
+      }
 
       _target=CosEventComm::PushConsumer::_nil(); // disconnected.
       eraseKey("ConsumerAdmin/ProxyPushSupplier");
