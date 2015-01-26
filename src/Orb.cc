@@ -147,7 +147,10 @@ void Orb::run()
           else if(curr->second)
           {
             DB(15,"Deferred call to "<<curr->first->operation()<<"() returned.")
-            curr->second->callback(curr->first);
+            try {
+                curr->second->callback(curr->first);
+            } catch (...) {
+            }
           }
           else
           {

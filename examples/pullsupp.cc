@@ -144,6 +144,8 @@ using namespace std;
 #  include <signal.h>
 #endif
 
+#include <cstdio>
+
 #include "CosEventComm.hh"
 #include "CosEventChannelAdmin.hh"
 #include "naming.h"

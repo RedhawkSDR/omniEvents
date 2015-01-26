@@ -184,6 +184,8 @@ using namespace std;
 #  include <signal.h>
 #endif
 
+#include <cstdio>
+
 #include "omniEvents.hh"
 #include "naming.h"
 

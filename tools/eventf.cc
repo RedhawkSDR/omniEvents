@@ -46,6 +46,8 @@ extern int optind;
 #  include <iostream.h>
 #endif
 
+#include <cstdio>
+
 #ifdef HAVE_STD_IOSTREAM
 using namespace std;
 #endif

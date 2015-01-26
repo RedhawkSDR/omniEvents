@@ -35,6 +35,7 @@
 #endif
 
 #include <stdio.h>     // sprintf
+#include <cstdlib>
 #include <assert.h>
 
 #ifdef HAVE_IOSTREAM

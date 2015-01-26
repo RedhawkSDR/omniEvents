@@ -39,6 +39,8 @@ extern int optind;
 #  include "getopt.h"
 #endif
 
+#include <cstdlib>
+
 #include "main.h"
 #include "omniEvents.h"
 #include "naming.h"
