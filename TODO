@@ -1,0 +1,43 @@
+This file lists planned features.
+
+ENHANCEMENTS
+
+ o Redesign `eventc' command line. Need generic parameter passing, rather than
+   a load of random single-letter options.
+
+ o Rewrite file stream interface in omniEventsLog.cc more cleanly. At the
+   moment it's a dense thicket of #ifdefs. Need to do a clean, modern C++
+   implementation, and add on older stuff around it, rather than have it all
+   mixed up together.
+
+ o Add support for GNU-style long options.
+
+ o Add a fallback logdir ($HOME/omniEventsLog.d) in user
+   space to help out non-root users who want to run servers.
+
+ o Drop privileges in daemon mode to enhance security.
+ 
+ o Detect `loops' of federated event channels. Currently, it is possible to
+   connect channel A with channel B, and B back with A. Any event sent to either
+   channel then bounces endlessly between the two.
+   
+ o 'Supply-only' federated channels. The channel has only a single consumer,
+   connected to an upstream supplier. Clients can only create new supplier
+   proxies. Useful for safely delivering events to untrusted recipients.
+   
+ o 'No destroy' channels, that ignore the destroy() operation.
+   'No disconnect' proxies, that ignore the disconnect_*() operation.
+   Again, useful for delivering events to untrusted recipients.
+ 
+FUTURE (all speculative)
+
+ o Plug-in filtering between the receive & send sides. Possibly Python
+   scripted?
+
+ o Typed event service. As bolt on? Or fully integrated?
+
+Please send any comments and suggestions to:
+
+alextingle@users.sourceforge.net
+naderp@users.sourceforge.net
+shamus13@users.sourceforge.net

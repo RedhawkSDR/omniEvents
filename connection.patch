@@ -1,0 +1,34 @@
+? connection.patch
+? dirk.patch
+? src/.nfs0009f0fa0000007c
+Index: src/ProxyPushConsumer.cc
+===================================================================
+RCS file: /cvsroot/omnievents/omniEvents/src/ProxyPushConsumer.cc,v
+retrieving revision 1.14.2.3
+diff -u -r1.14.2.3 ProxyPushConsumer.cc
+--- src/ProxyPushConsumer.cc	12 May 2005 14:44:26 -0000	1.14.2.3
++++ src/ProxyPushConsumer.cc	12 May 2005 18:15:18 -0000
+@@ -346,6 +346,8 @@
+ #endif
+ }
+ 
++OMNIEVENTS__DEBUG_REF_COUNTS__DEFN(ProxyPushConsumer_i::Connection)
++
+ void ProxyPushConsumer_i::Connection::callback(CORBA::Request_ptr req)
+ {
+   bool save =_targetIsProxy;
+Index: src/ProxyPushConsumer.h
+===================================================================
+RCS file: /cvsroot/omnievents/omniEvents/src/ProxyPushConsumer.h,v
+retrieving revision 1.6.2.2
+diff -u -r1.6.2.2 ProxyPushConsumer.h
+--- src/ProxyPushConsumer.h	12 May 2005 14:44:26 -0000	1.6.2.2
++++ src/ProxyPushConsumer.h	12 May 2005 18:15:18 -0000
+@@ -118,6 +118,7 @@
+       bool                           isProxy=false
+     );
+     virtual ~Connection();
++    OMNIEVENTS__DEBUG_REF_COUNTS__DECL
+     /** Sets _targetIsProxy, if it is. */
+     void callback(CORBA::Request_ptr req);
+     /** Save this object's state to a stream. */

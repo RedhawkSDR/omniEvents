@@ -1,0 +1,62 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>6. Notes for Windows Users</title>
+<link rel="stylesheet" href="omnievents.docbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<link rel="home" href="index.html" title="omniEvents">
+<link rel="up" href="index.html" title="omniEvents">
+<link rel="previous" href="ar01s05.html" title="5. Writing an Event Service Client">
+<link rel="next" href="ar01s07.html" title="7. Reference">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">6. Notes for Windows Users</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="ar01s05.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="ar01s07.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title" style="clear: both">
+<a name="id2458735"></a>6. Notes for Windows Users</h2></div></div>
+<div></div>
+</div>
+<p>If you are writing Event Service clients, you can use the
+    <tt class="filename">omniEventsCl.lib</tt> library instead of compiling the
+    Event Service <span class="acronym">IDL</span> files yourself. BUT I DON'T RECOMMEND
+    IT. There is no debug version of the <tt class="filename">omniEventsCl.lib</tt>
+    library, so developing with it would be awkward. For serious work, you
+    will be far better off compiling the <span class="acronym">IDL</span> files
+    yourself.</p>
+<p>If you do use the <tt class="filename">omniEventsCl.lib</tt> library,
+    then make sure that you use the &#8220;<span class="quote">multithreadded DLL</span>&#8221; runtime
+    with exceptions (options: <tt class="option">-GX -MD</tt>), otherwise it won't
+    work.</p>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="ar01s05.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="ar01s07.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">5. Writing an Event Service Client </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> 7. Reference</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

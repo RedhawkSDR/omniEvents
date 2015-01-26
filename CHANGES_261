@@ -1,0 +1,37 @@
+ o Fixed SEGV in ProxyPullConsumer when its peer disconnects uncleanly
+   or throws an exception.
+   Thanks to Dirk Siebnich for reporting this bug.
+
+ o New EventChannel parameter `PullRetryPeriod_ms' supercedes `PullRetryPeriod'.
+   The new parameter is set by `eventc -R'. The old parameter and its `-r'
+   option still work as before, for backwards compatibility.
+
+ o All necessary header files are now installed, previously the header files
+   for libomniEvents.so were not installed.
+
+   All IDL and header files are now installed into omniEvents subdirectories.
+   E.g. /usr/local/include/omniEvents /usr/local/share/idl/omniEvents. This
+   makes the installation much simpler BUT it breaks backwards compatibility.
+   
+   To preserve backwards compatibility, the old headers are still installed.
+   Don't use them! They will be removed in a future version.
+   
+   Stub header files are now generated with the omniidl option: -Wbuse_quotes
+
+ o Sys-V configuration file is now installed into /etc/default or
+   /etc/sysconfig, whichever is appropriate.
+
+ o Makefiles now use $(DESTDIR) variable. Allows for installation somewhere
+   other than the final destination. Thanks to Wolfgang Borgert.
+   E.g. make DESTDIR=/mnt/ install
+
+ o New configure option: --enable-unloadable-stubs. Turns on omniORB4's
+   unloadable stubs define, for shared libraries that need to be safely
+   unloadable. Thanks to Dirk Siebnich.
+   
+ o pkg-config file omniEvents.pc is now installed in ${prefix}/lib/pkgconfig
+   Thanks to Dirk Siebnich.
+
+ o RPM spec is now available in contrib/omniEvents.spec
+   To build an RPM, use: rpm -ta omniEvents-XXX.tar.gz
+   Thanks to Dirk Siebnich.

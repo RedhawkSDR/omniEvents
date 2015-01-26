@@ -1,0 +1,29 @@
+Release Notes for 2.1.2  (19th February 2003)
+=======================
+
+This is a minor release to enable omniEvents to build
+with both omniORB3 and omniORB4 using the old build system.
+
+The last release of omniEvents was 2.1.1 (13th October 2000).
+
+The source code distribution for omniEvents 2.1.2 is available at :
+
+http://sourceforge.net/projects/omnievents/
+
+
+Changes since 2.1.1
+-------------------
+
+1. Added support for omniORB4
+
+2. Known Issues
+
+  - The DLL produced for x86_nt_4.0 is incomplete. When linking against it
+    you need to also include the EventChannelAdminSK.o and CosLifeCycleSK.o
+    stub objects. For more details see the dir.mk file in src/sharedlib.
+
+  - In agent mode (ie with only PushConsumers and PullSuppliers connected to
+    an event channel) the response of the event channel degrades considerably
+    if a PullSupplier is unreachable (eg COMMS_FAILURE). The reason for this is
+    that the polling is done sequentially in one thread. There is a plan to
+    change it so that each ProxyPullConsumer polls in its own thread.

@@ -1,0 +1,1287 @@
+omniEvents
+----------
+
+Information on installing, building and using omniEvents, an implementation of 
+the OMG Event Service Specification v1.1 for omniORB3 and omniORB4.
+
+This work is licensed under the Creative Commons Attribution License. To view a 
+copy of this license, visit http://creativecommons.org/licenses/by/2.0/ or send 
+a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305,
+USA.
+
+We hope you find omniEvents useful. If you have any comments or suggestion for 
+improvements you can email us at: alextingle@users.sourceforge.net 
+naderp@users.sourceforge.net shamus13@users.sourceforge.net 
+
+1. Introduction
+===============
+
+omniEvents enables CORBA applications to communicate through asynchronous 
+broadcast channels rather than direct method calls. The server runs on Windows, 
+and most Unixes. It is a small, efficient implementation of the Object 
+Management Group's Event Service specification designed to work with omniORB.
+
+We provide a number of example programs in C++, Python and Java, to help you get
+started with writing your own event service clients.
+
+If you want to get going quickly, then read the "Quick Install" section for Unix
+or Windows, and then refer to the Reference section.
+
+1.1 Features
+------------
+
+ Implements untyped event channels.:
+       "Suppliers" send events to the event channel as a CORBA "`any'" type. The
+       channel then broadcasts the event to all of the "consumers" that have 
+       subscribed to the channel.
+
+ Persistent state.:
+       Channels and connections are continuously saved to disk, so that they can
+       be recreated when the server restarts.
+
+ Scalable.:
+       Event channels can be federated, which allows multiple servers to share 
+       the load of delivering events to many clients across a wide area network.
+
+ Fault tolerant.:
+       Implements a sub-set of the Fault-Tolerant CORBA specification. Servers 
+       may be configured to operate in pairs - if one fails then clients 
+       automatically switch over to the alternate.
+
+ Easy to install.:
+       The server runs as a daemon on Unix or a service on Windows. A SysV style
+       init file can be automatically installed on Unix, to get you up and 
+       running with minimum fuss.
+
+ Events can be filtered by type.:
+       Event channels can be configured to only pass on events of a particular 
+       CORBA type. Combined with channel federation, this allows Consumers to 
+       choose which type of events to receive.
+
+ Available as a library.:
+       You can create event channels within your own programs by linking to the 
+       shared library (on Unix).
+
+1.2 Further Reading
+-------------------
+
+Information on the Event Service specification can be obtained from the "CORBA 
+services : Event Service Specification" page at: 
+http://www.omg.org/technology/documents/formal/event_service.htm
+
+For an introduction to the various communication models see "OMG Event Object 
+Service", SIGS Vol9, Num 2, February 1997 . You can download from 
+http://www.iona.com/hyplan/vinoski/col9.pdf
+
+There is an excellent introduction to the Event Service in Chapter 20 of the 
+book "Advanced CORBA Programming with C++", by Michi Henning & Steve Vinoski.
+
+2. Build and Installation
+=========================
+
+This section provides a complete guide to building and installing omniEvents.
+
+2.1 Prerequisites
+-----------------
+
+You need to install omniORB before you can start with omniEvents. The latest 
+version of omniORB4 is strongly recommended. You can download it from here: 
+http://omniorb.sourceforge.net/download.html
+
+The Unix install requires GNU Make. If you don't have it already, then you can 
+download it from here: http://ftp.gnu.org/pub/gnu/make/
+
+In order to install omniEvents as a Windows service, you need to be using a 
+modern version of Windows. You need: NT, win2000 or XP. You cannot use: win95, 
+98 or ME (but you can just run the server manually).
+
+2.2 Quick Install Guide - Unix
+------------------------------
+
+omniEvents is distributed as source for Unix platforms. To install you must 
+unpack the omniEvents-XXX-src.tar.gz file, build the code and then install the 
+executables and init scripts into the correct locations on your system.
+
+ 1) Unpack the .tar.gz file: `gzip -dc omniEvents-XXX-src.tar.gz | tar xvf -'.
+
+ 2) Go down into the omniEvents diectory: `cd omniEvents-XXX'.
+
+ 3) Run the `configure' script. For a full list of available parameters, type 
+    `./configure --help'. Common parameters are:
+
+      --prefix=PREFIX        install files in PREFIX [/usr/local].                         
+      --with-omniorb=PATH    set the path to the local omniORB installation [$OMNIORBBASE].
+      -q, --quiet, --silent  do not print "checking..." messages.                          
+
+ 4) Compile the executables: `make'.
+
+ 5) Get superuser privileges: `su root'.
+
+ 6) Install the executables: `make install'.
+
+ 7) Install the system init script: `cd etc; make install'.
+
+ 8) Set up SysV service `omniorb-eventservice'...
+
+The procedure for setting up a SysV service differs from platform to platform. 
+You need to create symbolic links from the /etc/rcX.d directories to the 
+/etc/init.d/omniorb-eventservice init script. (The paths to these files may be 
+different on your system.) For example, on a Debian GNU/Linux system, the 
+command `update-rc.d omniorb-eventservice defaults' would set up omniEvents to 
+start at the default runlevels.
+
+Example: Typical Unix build session
+
+% gzip -dc omniEvents-XXX-src.tar.gz | tar xvf -
+% cd omniEvents-XXX
+% ./configure
+% make
+% su root
+# make install
+# cd etc
+# make install
+#
+
+2.3 Quick Install Guide - Windows
+---------------------------------
+
+omniEvents is distributed precompiled for Windows. To install you must unpack 
+the omniEvents-XXX-win32.zip file, set up your system path and install the 
+service.
+
+ 1) Unpack the .zip file using (for example) WinZip.
+
+    We assume that you unpack it into C:\Program Files. If you choose to put it 
+    somewhere else, then just adjust the remainder of these instructions 
+    accordingly.
+
+ 2) Add the omniEvents directory to the system environment variable: Path. It's 
+    important to NOT use the "local" path. Only the "system" path is available 
+    at boot time when services start.
+
+    Menu: Start -> Control Panel. Icon: System. Tab: Advanced. Click: 
+    Environment Variables.
+
+    Add to System Path: `;C:\Program Files\omniEvents-XXX'
+
+ 3) Create a data directory: C:\omniEvents. omniEvents will store its persistent
+    state in this directory.
+
+ 4) Install the service: Open a command window, and type: `omniEvents install -t
+    "C:\omniEvents\trace.out"'
+
+ 5) The service will start automatically when you next reboot, or you can start 
+    it manually now.
+
+2.4 Building from Source on Windows
+-----------------------------------
+
+It is not usually necessary to compile omniEvents for Windows, since it is 
+available pre-compiled.
+
+ 1) Firstly make sure you have everything you need:
+
+    Microsoft Visual C++ compiler. (Tested with version 6.0, service pack 3) The
+    environment variables for command-line compiling must be set up. You can 
+    test this by trying to compile hello.cc (in the win32 directory) with the 
+    command:
+
+    > cl -TP -GX -MD hello.cc
+
+    omniORB4. Get it from http://omniorb.sourceforge.net/download.html You 
+    should set up your PATH environment to include: <omniORB Top-Level Directory
+    >\bin\x86_win32 Test this by checking that this command prints out the 
+    omniidl help:
+
+    > omniidl -u
+
+    A fairly recent version of GNU Make for Windows (3.78.1 or above). Download 
+    it from http://unxutils.sourceforge.net/ or Google for "gnu make windows". 
+    The make.exe also needs to be in the PATH. For example, you could copy it 
+    into your C:\winnt directory. The following command should show version 
+    text:
+
+    > make --help
+
+ 2) Next make sure that the build files are correctly configured. Don't run the 
+    `configure' command on Windows, hand edit the files instead.
+
+    When you unpack the omniEvents-XXX-src.tar.gz file, the Windows config.mk 
+    and src/config.h files should already be in the correct places. If not, then
+    you can copy them from the win32/ directory.
+
+    Edit config.mk to set the values of these variables:
+
+      `OMNIORB_BASE'     full path to omniORB top-level directory.   
+      `OMNIORB_LIBS'     libraries provided by omniORB.              
+      `OMNIEVENTS_BASE'  full path to omniEvents top-level directory.
+
+ 3) Compile omniEvents. Open a command window, and `cd' to the omniEvents 
+    top-level directory. The following command builds omniEvents:
+
+    > make
+
+
+
+2.5 Programs
+------------
+
+This section lists the programs that are bundled with the omniEvents 
+distribution.
+
+Most importantly, the omniEvents daemon implements the EventChannelFactory and 
+hosts the event channels. The daemon is built in the src/ directory. On Unix the
+daemon is installed into /usr/local/sbin, by default.
+
+  Unix        win32           Description                
+  ----        -----           -----------                
+  omniEvents  omniEvents.exe  EventChannelFactory server.
+
+These tools enable management of event channels from the command line. They are 
+built in the tools/ directory. On Unix, they are installed into /usr/local/bin, 
+by default.
+
+  Unix      win32         Description                                
+  ----      -----         -----------                                
+  eventc    eventc.exe    Command to create a channel.               
+  eventf    eventf.exe    Command to federate (link) two channels.   
+  events    events.exe    Command to stream events to or from a file.
+  rmeventc  rmeventc.exe  Command to remove a channel.               
+
+Finally, four example clients are provided. These enable you to test whether or 
+not your omniEvents daemon is really working. They are built in the examples/ 
+directory.
+
+  Unix      win32         Description              
+  ----      -----         -----------              
+  pushsupp  pushsupp.exe  Push Supplier test client
+  pushcons  pushcons.exe  Push Consumer test client
+  pullsupp  pullsupp.exe  Pull Supplier test client
+  pullcons  pullcons.exe  Pull Consumer test client
+
+2.6 Supported Platforms
+-----------------------
+
+omniEvents 2.6 has been tested with omniORB 3.0.5 & omniORB 4.0.4 on the 
+following platforms.
+
+  Platform                            omniORB3  omniORB4
+  --------                            --------  --------
+  AIX 5.1 / xlC_r 5.0                 no        yes     
+  HPUX 11.00 / aCC A.03.37            -         yes     
+  Linux x86, Debian 3.1 / g++ 2.95.4  yes       yes     
+  Macintosh OS X, 10.3.5              -         yes     
+  Solaris 9 x86 / gcc-2.95.3          -         yes     
+  Solaris 8 sparc / CC 5.3            yes       yes     
+  Tru64 5.1B / cxx 6.5                yes       yes     
+  Windows 2000 / Visual C++ 6.0 SP3   -         yes     
+
+Earlier versions of omniEvents have been tested on the following platforms.
+
+  Platform                             omniORB3  omniORB4
+  --------                             --------  --------
+  Tru64 4.0F / cxx 6.2                 yes       yes     
+  HPUX 10.20 / aCC (B3910B A.01.21)    yes       -       
+  Windows NT 4.0 / Visual C++ 6.0 SP3  yes       -       
+  Solaris 2.5 / gcc-2.8.1              yes       -       
+  x86 Redhat linux 4.2 / gcc-2.7.2     yes       -       
+  x86 Mandrake 7.2 / gcc-2.95.3        -         yes     
+
+2.7 Directory Structure
+-----------------------
+
+The directory structure of the omniEvents distribution looks as follows.
+
+  auto/             various scripts used by AutoConf                      
+  doc/              this documentation                                    
+  doc/doxygen/      source code documentation generated by Doxygen.       
+  examples/         source files for examples                             
+  examples/java/    Java version of examples                              
+  examples/python/  Python version of examples                            
+  idl/              idl files                                             
+  src/              source files                                          
+  test/             test harness                                          
+  tools/            command line tools for manipulating the Event Service.
+  win32/            build files for Windows                               
+
+3. How to Set Configuration Options
+===================================
+
+This section tells you how to set configuration options, not what options are 
+available. For a detailed description of the available configuration options, 
+see the omniEvents reference section.
+
+See also the eventc reference section, for a description of how to configure new
+event channels at run-time.
+
+omniEvents' default "out of the box" set-up is fit for most purposes. You only 
+need to modify the configuration if you are interested in advanced features such
+as fault tolerant failover, or changing the default TCP port.
+
+In general, command-line parameters are stored somewhere, and retrieved each 
+time the daemon is started. The method of storing parameters is different on 
+Unix and Windows. In addition, there are a number of defaults that can be set at
+compile-time.
+
+3.1 Unix SysV-style service.
+----------------------------
+
+The SysV `init' program starts the omniEvents daemon from the script 
+/etc/init.d/omniorb-eventservice. You can also use this script to start and stop
+the service manually:
+
+syntax: `/etc/init.d/omniorb-eventservice [start|stop|restart]'
+
+The script reads omniEvents' configuration options from the file 
+/etc/default/omniorb-eventservice. Edit this file to change the options.
+
+See also: omniEvents reference.
+
+3.2 Windows service.
+--------------------
+
+The omniEvents Windows service stores options in the Registry key 
+`HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\omniEvents'. They are read
+each time the service starts. Usually the only option you should set is the -t 
+FILENAME option that directs trace output to the named file.
+
+You set the service options by listing them after the `install' or `setoptions' 
+commands:
+
+syntax: `omniEvents install OPTIONS'
+
+syntax: `omniEvents setoptions OPTIONS'
+
+You can see the currently stored options with the `getoptions' command:
+
+syntax: `omniEvents getoptions'
+
+See also: omniEvents-win32 reference.
+
+3.3 Compile-time customisation
+------------------------------
+
+Some compile-time parameters may only be adjusted by manually editing the file 
+src/defaults.h:
+
+ o the default data directory [/var/lib/omniEvents on Unix, C:\omniEvents on 
+   Windows.]
+
+ o the name of the environment variable that sets the data directory [
+   `OMNIEVENTS_LOGDIR']
+
+ o the period between data file checkpoints [`900' seconds]
+
+ o Default event channel parameters:
+
+     `PullRetryPeriod_ms'  Time between `pull()' calls.            [1 second]  
+     `MaxQueueLength'      Number of events to queue.              [1023]      
+     `MaxNumProxies'       Limit on number of ProxyPullSuppliers.  [1024]      
+     `CyclePeriod_ns'      Time between batch transfer of events.  [0.1 second]
+
+Please refer to the src/defaults.h file for descriptions of all parameters.
+
+4. Running the examples
+=======================
+
+The examples programs (`eventc', `pushsupp', `pushcons', `pullsupp', `pullcons')
+are also available as Python and Java. Look in examples/python/* and 
+examples/java/*.
+
+In these examples, we run omniEvents from the command line. A real installation 
+would probably use a system service, as mentioned in the installation section.
+
+4.1 Start the Naming Service (omniNames)
+----------------------------------------
+
+You must start the naming service (`omniNames') as the examples make use of the 
+naming service to locate the event channel factory. Please refer to the omniORB 
+documentation for information on how to set up the naming service.
+
+4.2 Start the omniEvents daemon (omniEvents)
+--------------------------------------------
+
+`omniEvents' implements an Event Channel Factory server which clients can use to
+create Event Channels. The factory registers itself with the Naming Service to 
+enable clients to locate it.
+
+Before you start, you may need to set the environment variable `OMNIORB_CONFIG' 
+to contain the full path name of the file omniORB.cfg. The default is 
+/etc/omniORB.cfg. For example:
+
+% OMNIORB_CONFIG=/wib/wob/omniORB.cfg; export OMNIORB_CONFIG
+
+Start omniEvents by running the executable. The binary is in PREFIX/sbin (if you
+used the `configure --prefix' parameter), or in /usr/local/sbin (by default). 
+Once the service is correctly started up, it automatically backgrounds itself 
+(Unix only).
+
+Example: Startup from the command-line.
+
+% omniEvents -l $HOME
+%
+
+omniEvents supports the following options:
+
+  cold start syntax: src/omniEvents [-pPORT] [-aENDPOINT] [OPTIONS]
+  warm start syntax: src/omniEvents [OPTIONS]
+
+  COLD START OPTIONS:
+   -p PORT      configure server port [11169]
+   -a ENDPOINT  set alternate endPoint for failover
+
+  OPTIONS:
+   -l PATH      full path to data directory* [/var/lib/omniEvents]
+   -P PIDFILE   keep track of running instance in PIDFILE.
+   -N ID        factory naming service id   ["EventChannelFactory"]
+   -f           Stay in the foreground.
+   -t FILE      Send trace messages to FILE instead of syslog.
+   -v           print the IOR of the new EventChannelFactory.
+   -V           display version
+   -h           display this help text
+
+  *You can also set the environment variable OMNIEVENTS_LOGDIR
+  to specify the directory where the data files are kept.
+
+The options provided allow you to override the default name used to register the
+Event Channel Factory with the Naming Service.
+
+omniEvents supports persistent channels by writing all state changes to a file. 
+This persistency datafile is stored in /var/lib/omniEvents/ by default. Use the 
+-l option or the `OMNIEVENTS_LOGDIR' environment variable to override the 
+default.
+
+4.3 Create an Event Channel (eventc)
+------------------------------------
+
+`eventc' resolves the factory name with the Naming Service and then contacts the
+factory to request an Event Channel. The Event Channel is created within the the
+omniEvents process.
+
+You can by-pass the factory completely and instantiate the event channel 
+directly within your own process by linking your application directly with the 
+omniEvents shared libraries. The src/main.cc file is a good starting point to 
+find out how.
+
+eventc then registers the created Event Channel with the Naming Service, and 
+exits.
+
+eventc has the following options:
+
+  syntax: tools/eventc OPTIONS [FACTORY_URI]
+
+  FACTORY_URI: The factory may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+   For example: corbaloc::localhost:11169/omniEvents
+
+  OPTIONS:                                         DEFAULT:
+   -n channel name                                  ["EventChannel"]
+   -N factory name (if URI is not specified)        ["EventChannelFactory"]
+   -c override default CyclePeriod_ns of new channel (nanoseconds)
+   -i set the InsName of new channel, to enable access via corbaloc
+   -p override default MaxNumProxies of new channel
+   -q override default MaxQueueLength of new channel
+   -R override default PullRetryPeriod_ms for new channel (milliseconds)
+   -t set an event type filter, FilterId=<RepositoryId>
+   -v print the IOR of the new EventChannel to standard output.
+   -h display this help text
+  OLD OPTIONS: (only used by omniEvents v2.4 and earlier)
+   -m override default MaxEventsPerConsumer for new channel
+
+The options provided allow you to override the default name used to register the
+Event Channel Factory and the created Event Channel with the Naming Service.
+
+eventc starts silently unless it encounters any problems or if you turn tracing 
+on by supplying the omniORB specific option -ORBtraceLevel 20. eventc terminates
+once the event channel has been created:
+
+% eventc
+%
+
+4.4 Run one or more example suppliers/consumers
+-----------------------------------------------
+
+There are four example clients: `pushsupp', `pushcons', `pullsupp' and 
+`pullcons'. When run, each supplier and consumer contacts the Naming Service to 
+obtain a reference to the Event Channel created in step 2 above. They then 
+connect themselves to the channel and do their bits. The data sent through the 
+channel is always of type `long' in the examples.
+
+As per `eventc', you can override the default name used to register the channel 
+in the naming service. The -d option is used to exercise the disconnect 
+functionality provided by the channel.
+
+  syntax: examples/pushsupp OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -d NUM   disconnect after sending NUM events     [0 - never disconnect]
+   -r       connect using a nil reference
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text
+
+  syntax: examples/pushcons OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -d NUM   disconnect after receiving NUM events   [0 - never disconnect]
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text
+
+  syntax: examples/pullsupp OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -d NUM   disconnect after sending NUM events     [0 - never disconnect]
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text
+
+  syntax: examples/pullcons OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -t       enable try_pull mode
+   -r       connect using a nil reference
+   -d NUM   disconnect after receiving NUM events   [0 - never disconnect]
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text
+
+The -t option in pullcons causes the pull consumer to issue non-blocking 
+`try_pull()' invocations rather than blocking `pull()'s.
+
+Example: Here is what to expect during a typical session
+
+  % examples/pushsupp
+  Looking for EventChannel
+  Obtained SupplierAdmin.
+  Obtained ProxyPushConsumer.
+  Connected Push Supplier.
+  Push Supplier: push() called. Data : 0
+  Push Supplier: push() called. Data : 1
+  Push Supplier: push() called. Data : 2
+  Push Supplier: push() called. Data : 3
+  Push Supplier: push() called. Data : 4
+  Push Supplier: push() called. Data : 5
+  ...
+
+  % examples/pushcons
+  Obtained ConsumerAdmin.
+  Obtained ProxyPushSupplier.
+  Connected Push Consumer.
+  Push Consumer: push() called. Data : 0
+  Push Consumer: push() called. Data : 1
+  Push Consumer: push() called. Data : 2
+  Push Consumer: push() called. Data : 3
+  Push Consumer: push() called. Data : 4
+  Push Consumer: push() called. Data : 5
+  Push Consumer: push() called. Data : 6
+  ...
+
+Pull consumers cause the event channel to poll every pull supplier connected 
+when they request an event (using `pull()', not `try_pull()') until an event 
+enters the event channel (which could come from a push supplier).
+
+In order to prevent the Event Channel from consuming excessive CPU when polling 
+for events the -r option of eventc can be used to specify a pull retry period 
+QOS parameter. This parameter represents a timeout in seconds to wait for before
+each poll cycle. This parameter defaults to 1 second.
+
+5. Writing an Event Service Client
+==================================
+
+The examples are a great place to start learning about the event service. Feel 
+free to use them as a starting point for your own clients. The same examples are
+available as C++, Python and Java. However, this section provides a few more 
+general instructions.
+
+5.1 Connecting
+--------------
+
+Here's a list of all the ways clients can locate the omniEvents server's 
+EventChannelFactory object:
+
+ by IOR. (`omniEvents -v'):
+       The -v option prints the EventChannelFactory's IOR. You can then use a 
+       straightforward `string_to_object()' method call to turn this into an 
+       object reference.
+
+ by `corbaloc::host:port/omniEvents':
+       The EventChannelFactory is registered in the omniORB INSPOA as 
+       `omniEvents' which means that you can use the human readable "corbaloc" 
+       string above instead of the IOR. Replace `host' with omniEvents' hostname
+       and `port' with the TCP port: 11169 (or whatever you chose with the -p 
+       option).
+
+ `resolve_initial_references("EventService")':
+       If omniORB.cfg is properly configured, you can use 
+       `resolve_initial_references()' to find the event service, just as is 
+       usually done for the Naming Service. Just add a line like this:
+
+       InitRef = EventService=corbaloc::host:port/omniEvents
+
+ The naming service (`omniEvents -N NAME'):
+       omniEvents always registers the EventChannelFactory as a top-level entry 
+       in the naming service. Use the -N option to control the context, id & 
+       kind. (`EventChannelFactory' by default).
+
+5.2 Using `any' type
+--------------------
+
+The "events" pushed and pulled around by the Event Service are simply CORBA 
+`any' values. The `any' type can hold any CORBA type. The examples simply send a
+`long' value, but a more realistic problem would employ a user-defined struct as
+the event.
+
+For user-defined types you first need to define the type in IDL, then compile 
+the IDL. For omniORB with C++ you would use `omniidl -bcxx -Wba'. The -Wba 
+generates the operators you will need to use your type with `CORBA::Any'.
+
+Here's a small example:
+
+  module MyMessages {
+    struct NVPair {
+      NameType  name;
+      ValueType value;
+    };
+  };
+
+Assuming you compile this IDL correctly, you will have insertion & extraction 
+methods: `operator>>=()' and `operator<<=()'. Here are examples of how to use 
+them:
+
+  CORBA::Any data;
+
+  // Insert by value
+  MyMessages::NVPair inputNvPair = ...
+  data <<= inputNvPair; // takes a deep copy.
+
+  // Insert by pointer
+  MyMessages::NVPair* inputNvPairPtr = ...
+  data <<= inputNvPairPtr; // does NOT copy - assumes ownership
+  //XX delete inputNvPairPtr;  <== NO!! 
+  .
+  .
+  .
+  // Extract
+  const MyMessages::NVPair* outputNvPairPtr = NULL;
+  if(data >>= outputNvPairPtr)
+  {
+    // Use outputNvPairPtr BUT DON'T DELETE IT!!
+  }
+  else
+  {
+    cerr<<"Wrong type!!"<<endl;
+  }
+
+Notice the memory ownership issues. It's best to double check each time you use 
+`<<=' or `>>=' until you're confident you've got it right.
+
+5.3 Disconnecting
+-----------------
+
+All Supplier and Consumer objects have a `disconnect_*()' method. This means 
+that each connection has two disconnect methods, one at each end. Which method 
+should you call to terminate the connection?
+
+The best approach is to call the Proxy's `disconnect_*()', rather than your own.
+(Either will work, but instructing the Proxy to disconnect is more efficient.)
+
+The rule for implementing your own servant's `disconnect_*()' method is quite 
+simple. Each `disconnect_*()' method should call the other `disconnect_*()' 
+method. It is the responsibility of the Event Service end (the Proxy) to ensure 
+that an infinite loop doesn't occur. So clients don't have to worry - they 
+should always just call the Proxy's `disconnect_*()' when their own 
+`disconnect_*()' is called.
+
+There is of course NO GUARANTEE that a `disconnect_*()' method will only be 
+called once. You should never assume that your servants' methods will not be 
+called until the object has actually been deactivated in the POA.
+
+It is possible to connect to ProxyPushConsumer & ProxyPullSupplier objects 
+without providing an address for callbacks. When you do that, the proxies cannot
+call your disconnect method. If you choose to connect to these proxies without 
+providing an address for callbacks, then you must clean up your own objects 
+without help from the Event Service.
+
+These semantics only apply to Event Service v1.1 implementations such as 
+omniEvents v2.6. Earlier specifications were vague about disconnection 
+semantics, so you must be VERY careful if you want to interoperate with an older
+Event Service implementation (such as omniEvents v2.4 and earlier).
+
+6. Notes for Windows Users
+==========================
+
+If you are writing Event Service clients, you can use the omniEventsCl.lib 
+library instead of compiling the Event Service IDL files yourself. BUT I DON'T 
+RECOMMEND IT. There is no debug version of the omniEventsCl.lib library, so 
+developing with it would be awkward. For serious work, you will be far better 
+off compiling the IDL files yourself.
+
+If you do use the omniEventsCl.lib library, then make sure that you use the 
+"multithreadded DLL" runtime with exceptions (options: -GX -MD), otherwise it 
+won't work.
+
+7. Reference
+============
+
+--------------------------------------------------------------------------------
+omniEvents - CORBA Event Service daemon 
+
+`omniEvents' -p <port> -a <endpoint> -l <directory> -P <pidfile> -N 
+<factory-name> -f -t <file> -vVh -ORB<parameter> <value> 
+
+DESCRIPTION
+
+   `omniEvents' is a CORBA Event Service server program. It is designed to be 
+   run as a standalone daemon process.
+
+   The server continuously saves its state to a file. Event channels are 
+   re-created from this file each time the server restarts. The options -p and 
+   -a affect the identity of the server's event channels, so these options can 
+   only be set the first time the server is run.
+
+   Servers may be configured to operate in pairs - if one fails then clients 
+   automatically switch over to the alternate.
+
+OPTIONS
+
+    -p port:
+          Sets the TCP port on which a new server will listen. The default is 
+          `11169'
+
+          This value is stored in the new server's persistent state. There is no
+          need to supply this option when a server is restarted, since the value
+          is read from the file. If the option is supplied then it is simply 
+          compared with the stored value - if the two do not match then the 
+          program exits with an error.
+
+    -a endpoint:
+          Sets an alternate endPoint for a new server. All CORBA object 
+          references generated by the server include the alternate address. When
+          clients cannot contact the server, they automatically fall back to 
+          trying the alternate address.
+
+          This option is exactly equivalent to the ORB parameter 
+          endPointNoListen, except that the value is saved in the server's 
+          persistency file, so that it is remembered whenever omniEvents is 
+          restarted.
+
+          The format for a TCP endpoint is `giop:tcp:HOST:PORT', for example: 
+          `-a giop:tcp:secondary.host:11169'
+
+          This value is stored in the server's persistent state. There is no 
+          need to supply this option when a server is restarted, since the value
+          is read from the file. If the option is supplied then it is simply 
+          compared with the stored value - if the two do not match then the 
+          program exits with an error.
+
+    -l directory:
+          Full path to data directory, where omniEvents stores its persistent 
+          state. The default is /var/lib/omniEvents
+
+    -P pidfile:
+          Keep track of the currently running omniEvents process in `pidfile', 
+          which should usually be /var/run/omniEvents.pid. If `pidfile' already 
+          exists, then the server refuses to start. The default is to not write 
+          a PID file.
+
+    -N factory-name:
+          Sets the CORBA Name Service name for the EventChannelFactory CORBA 
+          object. Each time the server starts, it registers its channel factory 
+          object with `factory-name' in the Name Service.
+
+          Format for name: 
+          `[CONTEXT-ID[.CONTEXT-KIND]/]*OBJECT-ID[.OBJECT-KIND]' 
+
+          Examples: `foo', `foo.bar', `foo.bar/baz/qux', `foo/bar/baz.qux'.
+
+          The default is `EventChannelFactory'
+
+    -f:   Run the server in the foreground (do not daemonize).
+
+    -t file:
+          Send trace messages to `file' instead of syslog.
+
+    -v:   Output the CORBA IOR of the EventChannelFactory CORBA object when the 
+          server starts. This will go either to syslog or to the current trace 
+          file.
+
+    -V:   Display version.
+
+    -h:   Display a short summary of command-line options.
+
+    -ORBparameter value:
+          Standard omniORB options. see omniORB documentation for details. Do 
+          NOT use this option to set the `endPoint' or `alternateEndPoint'. This
+          option is commonly used to set the omniORB `traceLevel', in order to 
+          get more detailed output.
+
+          Example: `-ORBtraceLevel 5'
+
+EVENT CHANNEL PARAMETERS
+
+   The omniEvents::EventChannelFactory object implements the standard 
+   CosLifeCycle::GenericFactory interface. An EventChannel object is created by 
+   a call to the `create_object(key,the_criteria)' operation.
+
+   The "key" parameter must be set to `"EventChannel"."object interface"'. The 
+   "the_criteria" parameter is a sequence of various service parameters. 
+   Supported parameters are listed below.
+
+    CyclePeriod_ns (`long'):
+          Sets the cycle period of the channel (nanoseconds). This is the time 
+          that the channel waits before transferring messages from the incoming 
+          queue to the outgoing queue. While messages are being transferred, 
+          incoming calls are queued. The default is 0.1 seconds.
+
+    FilterId (`string'):
+          Only types whose `RepositoryId' matches the parameter are permitted to
+          pass through the channel. Other events are silently ignored.
+
+    InsName (`string'):
+          Sets the name by which the EventChannel is known in omniEvents' 
+          INSPOA. You can refer to the channel with a corbaloc string like this:
+          `corbaloc::HOST:11169/NAME'
+
+    MaxNumProxies (`long'):
+          The maximum number of `ProxyPullSuppliers' per channel.
+
+    MaxQueueLength (`long'):
+          How many events are buffered by the `ConsumerAdmin' object. The 
+          discard policy is FIFO, meaning that the oldest events are discarded 
+          first in case of overflow.
+
+    PullRetryPeriod_ms (`long'):
+          Period (milliseconds) between polls when in Pull Supplier - Push 
+          Consumer mode.
+
+SIGNALS
+
+    SIGTERM, SIGINT:
+          Shuts down the server.
+
+    SIGUSR1:
+          You can change the traceLevel while the application is running. Send 
+          the server SIGUSR1 to bump its traceLevel up by 5. The traceLevel is 
+          wrapped at 45, so you can always get it back to where it started by 
+          repeatedly sending SIGUSR1.
+
+          Example: `kill -USR1 `cat /var/run/omniEvents.pid`'
+
+ENVIRONMENT VARIABLES
+
+    OMNIEVENTS_LOGDIR:
+          Sets the directory where data files are kept by default. An 
+          alternative to the -l option.
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © 2003-2005 Alex Tingle, 1999 Paul Nader.
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+--------------------------------------------------------------------------------
+omniEvents-win32 - CORBA Event Service for Windows 
+
+Command:
+
+`omniEvents' -p <port> -a <endpoint> -l <directory> -N <factory-name> -t <file> 
+-vVh -ORB<parameter> <value> 
+
+Windows service control:
+
+`omniEvents' install <OPTIONS> uninstall setoptions <OPTIONS> getoptions 
+
+DESCRIPTION
+
+   `omniEvents' is a CORBA Event Service server program. It is designed to be 
+   run as a Windows service.
+
+   The server continuously saves its state to a file. Event channels are 
+   re-created from this file each time the server restarts. The options -p and 
+   -a affect the identity of the server's event channels, so these options can 
+   only be set the first time the server is run.
+
+   Servers may be configured to operate in pairs - if one fails then clients 
+   automatically switch over to the alternate.
+
+SERVICE CONTROL
+
+   `omniEvents' itself has four service set-up commands. The command name must 
+   immediately follow the `omniEvents'. Any normal command-line options which 
+   follow the command are stored in the Windows registry. They will be used when
+   the service starts up.
+
+    `omniEvents install OPTIONS':
+          Install the service with the specified options. The only option that 
+          will usually be useful is -t, which instructs omniEvents to send trace
+          logs to a file.
+
+          Example: `omniEvents install -t "C:\omniEvents\trace.out"'
+
+    `omniEvents uninstall':
+          Uninstalls the service.
+
+    `omniEvents setoptions OPTIONS':
+          Changes the service's stored options.
+
+    `omniEvents getoptions':
+          Outputs the service's stored option to standard output.
+
+   Once the `omniEvents' is installed, you can control it from the command line,
+   or from scripts with the `Sc.exe' command. `Sc.exe' is distributed with the 
+   "Microsoft SDK".
+
+    `sc start omniEvents':
+          Starts the server.
+
+    `sc stop omniEvents':
+          Shuts down the server.
+
+    `sc control omniEvents 128':
+          You can change the traceLevel while the application is running. Send 
+          control signal `128' to the server to bump its traceLevel up by 5. The
+          traceLevel is wrapped at 45, so you can always get it back to where it
+          started by repeatedly sending signal `128'.
+
+OPTIONS
+
+    -p port:
+          Sets the TCP port on which a new server will listen. The default is 
+          `11169'
+
+          This value is stored in the new server's persistent state. There is no
+          need to supply this option when a server is restarted, since the value
+          is read from the file. If the option is supplied then it is simply 
+          compared with the stored value - if the two do not match then the 
+          program exits with an error.
+
+    -a endpoint:
+          Sets an alternate endPoint for a new server. All CORBA object 
+          references generated by the server include the alternate address. When
+          clients cannot contact the server, they automatically fall back to 
+          trying the alternate address.
+
+          This option is exactly equivalent to the ORB parameter 
+          endPointNoListen, except that the value is saved in the server's 
+          persistency file, so that it is remembered whenever omniEvents is 
+          restarted.
+
+          The format for a TCP endpoint is `giop:tcp:HOST:PORT', for example: 
+          `-a giop:tcp:secondary.host:11169'
+
+          This value is stored in the server's persistent state. There is no 
+          need to supply this option when a server is restarted, since the value
+          is read from the file. If the option is supplied then it is simply 
+          compared with the stored value - if the two do not match then the 
+          program exits with an error.
+
+    -l directory:
+          Full path to data directory, where omniEvents stores its persistent 
+          state. The default is C:\omniEvents
+
+    -N factory-name:
+          Sets the CORBA Name Service name for the EventChannelFactory CORBA 
+          object. Each time the server starts, it registers its channel factory 
+          object with `factory-name' in the Name Service.
+
+          Format for name: 
+          `[CONTEXT-ID[.CONTEXT-KIND]/]*OBJECT-ID[.OBJECT-KIND]' 
+
+          Examples: `foo', `foo.bar', `foo.bar/baz/qux', `foo/bar/baz.qux'.
+
+          The default is `EventChannelFactory'
+
+    -t file:
+          Send trace messages to `file'.
+
+    -v:   Output the CORBA IOR of the EventChannelFactory CORBA object when the 
+          server starts.
+
+    -V:   Display version.
+
+    -h:   Display a short summary of command-line options.
+
+    -ORBparameter value:
+          Standard omniORB options. see omniORB documentation for details. Do 
+          NOT use this option to set the `endPoint' or `alternateEndPoint'. This
+          option is commonly used to set the omniORB `traceLevel', in order to 
+          get more detailed output.
+
+          Example: `-ORBtraceLevel 5'
+
+EVENT CHANNEL PARAMETERS
+
+   The omniEvents::EventChannelFactory object implements the standard 
+   CosLifeCycle::GenericFactory interface. An EventChannel object is created by 
+   a call to the `create_object(key,the_criteria)' operation.
+
+   The "key" parameter must be set to `"EventChannel"."object interface"'. The 
+   "the_criteria" parameter is a sequence of various service parameters. 
+   Supported parameters are listed below.
+
+    CyclePeriod_ns (`long'):
+          Sets the cycle period of the channel (nanoseconds). This is the time 
+          that the channel waits before transferring messages from the incoming 
+          queue to the outgoing queue. While messages are being transferred, 
+          incoming calls are queued. The default is 0.1 seconds.
+
+    FilterId (`string'):
+          Only types whose `RepositoryId' matches the parameter are permitted to
+          pass through the channel. Other events are silently ignored.
+
+    InsName (`string'):
+          Sets the name by which the EventChannel is known in omniEvents' 
+          INSPOA. You can refer to the channel with a corbaloc string like this:
+          `corbaloc::HOST:11169/NAME'
+
+    MaxNumProxies (`long'):
+          The maximum number of `ProxyPullSuppliers' per channel.
+
+    MaxQueueLength (`long'):
+          How many events are buffered by the `ConsumerAdmin' object. The 
+          discard policy is FIFO, meaning that the oldest events are discarded 
+          first in case of overflow.
+
+    PullRetryPeriod_ms (`long'):
+          Period (milliseconds) between polls when in Pull Supplier - Push 
+          Consumer mode.
+
+ENVIRONMENT VARIABLES
+
+    OMNIEVENTS_LOGDIR:
+          Sets the directory where data files are kept by default. An 
+          alternative to the -l option.
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © 2003-2005 Alex Tingle, 1999 Paul Nader.
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+--------------------------------------------------------------------------------
+eventc - create a CORBA EventChannel and register it in the naming service 
+
+`eventc' -n <channel-name> -N <factory-name> -c <nanoseconds> -i <id> -p <num> 
+-q <num> -R <milliseconds> -t <repository-id> -vh -ORB<parameter> <value> 
+<factory-uri> 
+
+DESCRIPTION
+
+   eventc contacts the omniEvents server to request an Event Channel. The Event 
+   Channel is created within the the omniEvents process. eventc then registers 
+   the created Event Channel with the Naming Service, and exits.
+
+   factory-uri: The factory may be specified as a URI. This may be an IOR, or a 
+   corbaloc::: or corbaname::: URI.
+
+   Example: `eventc corbaloc::localhost:11169/omniEvents'
+
+   If the factory-uri argument is not supplied, then the -N factory-name option 
+   is used to look up the server in the CORBA Name Service.
+
+OPTIONS
+
+    -n channel-name:
+          Sets the CORBA Name Service name for the new EventChannel CORBA 
+          object.
+
+          Format for channel-name: 
+          `[CONTEXT-ID[.CONTEXT-KIND]/]*OBJECT-ID[.OBJECT-KIND]' 
+
+          Examples: `foo', `foo.bar', `foo.bar/baz/qux', `foo/bar/baz.qux'.
+
+          The default is `EventChannel'
+
+    -N factory-name:
+          The CORBA Name Service name for the EventChannelFactory CORBA object. 
+          The default value is `EventChannelFactory'. This value is only used 
+          when the `factory-uri' argument is not supplied.
+
+    -c nanoseconds:
+          Sets the `CyclePeriod_ns' parameter of the new event channel.
+
+    -i id:
+          Set the `InsName' of new event channel, to enable access via corbaloc.
+
+    -p num:
+          Sets the `MaxNumProxies' parameter of the new event channel.
+
+    -q num:
+          Sets the `MaxQueueLength' parameter of the new event channel.
+
+    -R milliseconds:
+          Sets the `PullRetryPeriod_ms' parameter of the new event channel.
+
+    -t repository-id:
+          Sets the `FilterId' parameter of the new event channel.
+
+    -v:   Output the CORBA IOR of the new EventChannel CORBA object.
+
+    -h:   Display a short summary of command-line options.
+
+    -ORBparameter value:
+          Standard omniORB options. see omniORB documentation for details. This 
+          option is commonly used to set the omniORB `traceLevel', in order to 
+          get more detailed output.
+
+          Example: `-ORBtraceLevel 5'
+
+ENVIRONMENT VARIABLES
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © 2003-2005 Alex Tingle, 1999 Paul Nader.
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+--------------------------------------------------------------------------------
+eventf - connect (federate) two CORBA EventChannels 
+
+`eventf' <from-channel-uri> <to-channel-uri> 
+
+DESCRIPTION
+
+   `eventf' establishes a connection between two event channels. The event 
+   channels must both already be in existence (perhaps created by the `eventc' 
+   command). If both event channels are implemented by omniEvents, then the 
+   connection is persistent: it will be recreated if one or both of the channels
+   is shut down and later restarted.
+
+   The from- and to-channels must be specified as URIs. This may be an IOR, or a
+   corbaloc::: or corbaname::: URI.
+
+   Example: `eventf corbaname::#from.channel corbaname::#to.channel'
+
+ENVIRONMENT VARIABLES
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © 2004,2005 Alex Tingle.
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+--------------------------------------------------------------------------------
+events - stream events from or to a CORBA EventChannel 
+
+`events' -n <channel-name> -s -h -ORB<parameter> <value> <channel-uri> 
+
+DESCRIPTION
+
+   `events' streams events from an event channel to standard output, or (-s) 
+   from standard input to an event channel.
+
+   Events are streamed in raw binary form, accompanied by a timestamp. When the 
+   stream is played back into a channel, the timestamps are used the replicate 
+   the original delays between the messages.
+
+   The main use for this command it to record sets of events and play them back 
+   later for testing.
+
+   Recording example: `events corbaname::#EventChannel > test.dat'
+
+   Playback example: `events -s corbaname::#EventChannel < test.dat'
+
+OPTIONS
+
+    -n channel-name:
+          The CORBA Name Service name used to look up the EventChannel CORBA 
+          object.
+
+          Format for channel-name: 
+          `[CONTEXT-ID[.CONTEXT-KIND]/]*OBJECT-ID[.OBJECT-KIND]' 
+
+          Examples: `foo', `foo.bar', `foo.bar/baz/qux', `foo/bar/baz.qux'.
+
+          The default is `EventChannel'
+
+    -s:   Supply mode. Read events from standard input.
+
+    -h:   Display a short summary of command-line options.
+
+    -ORBparameter value:
+          Standard omniORB options. see omniORB documentation for details. This 
+          option is commonly used to set the omniORB `traceLevel', in order to 
+          get more detailed output.
+
+          Example: `-ORBtraceLevel 5'
+
+ENVIRONMENT VARIABLES
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © 2004,2005 Alex Tingle.
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+--------------------------------------------------------------------------------
+rmeventc - destroy a CORBA EventChannel 
+
+`rmeventc' -n <channel-name> -h -ORB<parameter> <value> <channel-uri> 
+
+DESCRIPTION
+
+   `rmeventc' connects to an event channel and calls its `destroy()' operation. 
+   If the channel is located by the -n option, then the name is unbound 
+   (removed) from the Name Service.
+
+   Example: `rmeventc -nfoo/bar/baz.qux'
+
+OPTIONS
+
+    -n channel-name:
+          The CORBA Name Service name used to look up the EventChannel CORBA 
+          object.
+
+          Format for channel-name: 
+          `[CONTEXT-ID[.CONTEXT-KIND]/]*OBJECT-ID[.OBJECT-KIND]' 
+
+          Examples: `foo', `foo.bar', `foo.bar/baz/qux', `foo/bar/baz.qux'.
+
+          The default is `EventChannel'
+
+    -h:   Display a short summary of command-line options.
+
+    -ORBparameter value:
+          Standard omniORB options. see omniORB documentation for details. This 
+          option is commonly used to set the omniORB `traceLevel', in order to 
+          get more detailed output.
+
+          Example: `-ORBtraceLevel 5'
+
+ENVIRONMENT VARIABLES
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © 2003-2005 Alex Tingle.
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+

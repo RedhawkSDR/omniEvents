@@ -1,0 +1,49 @@
+% python testeventchannel.py -ORBInitRef 'EventChannelFactory=corbaname::localhost#EventChannelFactory.EventChannelFactory'
+passed: destroy worked
+passed: EvCh-1: got exception OBJECT_NOT_EXIST
+passed: EvCh-2: got exception OBJECT_NOT_EXIST
+passed: EvCh-3: got exception OBJECT_NOT_EXIST
+passed: EvCh-4: got exception OBJECT_NOT_EXIST
+passed: EvCh-5: got exception OBJECT_NOT_EXIST
+passed: EvCh-6: got exception OBJECT_NOT_EXIST
+passed: EvCh-7: got exception OBJECT_NOT_EXIST
+passed: EvCh-8
+passed: EvCh-9
+passed: EvCh-10
+passed: EvCh-11
+%
+
+
+% python test.py -ORBInitRef 'Channel=corbaname::localhost#EventChannel.EventChannel'
+passed: PPshC-1
+passed: PPshC-3
+passed: PshC-1
+FAILED: PshC-2: value arrived (PshC-2)
+passed: PPshC-2, PshC-4
+FAILED: PshC-5: no exception
+passed: PPulS-1
+passed: PPulS-3
+passed: PulS-2
+passed: PulS-3
+passed: PulS-4
+passed: PPulS-2
+passed: PulS-5: got exception Disconnected
+passed: PulS-6: got exception Disconnected
+passed: PPulS-8: got exception OBJECT_NOT_EXIST
+passed: PPulC-2
+passed: PPulC-3
+passed: PPulC-works
+passed: PulC-2
+passed: PulC-3
+passed: PPshS-2: got exception BAD_PARAM
+passed: PPshS-3: got exception AlreadyConnected
+passed: PPshS-works
+passed: PPshS-1, PshS-1
+passed: PshS-2: got exception OBJECT_NOT_EXIST
+%
+
+Note: The two failures are caused by details of the omniEvents implementation.
+The spec. strongly implies an inefficient implementation where resources are
+allocated in the server when connect_* is called. omniEvents uses a default
+servant for its ProxyPushConsumer implementation. This means that it can respond
+to push calls without the need for connection or resource allocation.

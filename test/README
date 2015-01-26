@@ -1,0 +1,16 @@
+This directory contains Python test programs.
+
+Run them using the python interpreter, and then follow with an ORBInitRef
+option, as follows:
+
+# Test event channel interface:
+python testeventchannel.py -ORBInitRef 'EventChannelFactory=corbaname::localhost#EventChannelFactory.EventChannelFactory'
+
+# Test all proxy types:
+python test.py -ORBInitRef 'Channel=corbaname::localhost#EventChannel.EventChannel'
+
+# Test individual proxy types:
+python testproxypullconsumer.py -ORBInitRef 'Channel=corbaname::localhost#EventChannel.EventChannel'
+python testproxypullsupplier.py -ORBInitRef 'Channel=corbaname::localhost#EventChannel.EventChannel'
+python testproxypushconsumer.py -ORBInitRef 'Channel=corbaname::localhost#EventChannel.EventChannel'
+python testproxypushsupplier.py -ORBInitRef 'Channel=corbaname::localhost#EventChannel.EventChannel'

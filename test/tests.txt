@@ -1,0 +1,304 @@
+EXCEPTIONS:
+
+There is no explicit test for the absence of exceptions. All calls are
+instrumented to detect exceptions, and report specification violation if it
+occurs. Unless otherwise stated, execeptions are not expected during testing.
+If an unexpected exception occurs, then the test fails.
+
+X is a CORBA 'any' containing a known, unique 'string' value (usually the
+test's ID).
+
+PshS is a reference to a PushSupplier object.
+PshC is a reference to a PushConsumer object.
+PulS is a reference to a PullSupplier object.
+PulC is a reference to a PullConsumer object.
+
+Some tests only probe ALLOW-type requirements. These test cannot fail, and are
+marked NO FAIL.
+
+
+THE PUSHCONSUMER INTERFACE
+
+TEST PshC-1: [2.1.1a]
+
+Pre:    The PushConsumer is set up to receive communication.
+Action: Call PushConsumer::push(), with some value X as the parameter.
+Expect: X appears in the PushConsumer's output.
+
+TEST PshC-2: [2.1.1d]
+
+Pre:    The PushConsumer is set up to receive communication.
+Action: Call PushConsumer::disconnect_push_consumer(), then ::push(X)
+Expect: X does not appear in the PushConsumer's output.
+        ::push(X) may raise an exception.
+
+TEST PshC-3: [2.1.1e]
+
+Pre:    The PushConsumer is set up to receive communication.
+Action: Call PushConsumer::disconnect_push_consumer()
+Expect: Resources are released.
+
+TEST PshC-4: [2.1.1f] (NO FAIL)
+
+Pre:    The PushConsumer is set up to receive communication.
+Action: Call PushConsumer::disconnect_push_consumer()
+Expect: disconnect_push_consumer() may be called on connected supplier.
+
+TEST PshC-5: [2.1.5a]
+
+Pre:    The PushConsumer is set up to receive communication.
+Action: Call PushConsumer::disconnect_push_consumer() twice.
+Expect: The second call returns CORBA::OBJECT_NOT_EXIST exception.
+
+
+THE PUSHSUPPLIER INTERFACE
+
+TEST PshS-1: [2.1.2c]
+
+Pre:    The PushSupplier is set up to send messages.
+Action: Call PushSupplier::disconnect_push_supplier
+Expect: disconnect_push_consumer() is called on the connected consumer.
+
+TEST PshS-2: [2.1.5a]
+
+Pre:    The PushSupplier is set up to send messages.
+Action: Call PushSupplier::disconnect_push_supplier() twice.
+Expect: The second call returns CORBA::OBJECT_NOT_EXIST exception.
+
+
+THE PULLSUPPLIER INTERFACE
+
+TEST PulS-1: [2.1.3b]
+
+Pre:    The PullSupplier is set up to send messages,
+        but no messages are available.
+Action: Call PullSupplier::pull
+Expect: either the call does not return, or an exception is returned.
+
+TEST PulS-2: [2.1.3d]
+
+Pre:    Test 6 completed without an exception.
+Action: Event X is made available.
+Expect: Event X is returned.
+
+TEST PulS-3: [2.1.3g]
+
+Pre:    The PullSupplier is set up to send messages,
+        and event X is made available.
+Action: Call PullSupplier::try_pull
+Expect: the call returns without delay. has_event is set to 1. The return
+        value is set to X.
+
+TEST PulS-4: [2.1.3h]
+
+Pre:    The PullSupplier is set up to send messages,
+        but no messages are available.
+Action: Call PullSupplier::try_pull
+Expect: the call returns without delay. has_event is set to 0. The return
+        value is set to long(0).
+
+TEST PulS-5: [2.1.3j]
+
+Pre:    The PullSupplier is set up to send messages.
+Action: Call PullSupplier::disconnect_pull_supplier(), then ::pull()
+Expect: an exception other than TRANSIENT is returned.
+
+TEST PulS-6: [2.1.3j]
+
+Pre:    The PullSupplier is set up to send messages.
+Action: Call PullSupplier::disconnect_pull_supplier(), then ::try_pull()
+Expect: an exception other than TRANSIENT is returned.
+
+TEST PulS-7: [2.1.3k]
+
+Pre:    The PullSupplier is set up to send messages.
+Action: Call PullSupplier::disconnect_pull_supplier()
+Expect: Resources are released.
+
+TEST PulS-8: [2.1.5a]
+
+Pre:    The PullSupplier is set up to send messages.
+Action: Call PullSupplier::disconnect_pull_supplier() twice.
+Expect: The second call returns CORBA::OBJECT_NOT_EXIST exception.
+
+
+THE PULLCONSUMER INTERFACE
+
+TEST PulC-1: [2.1.4c]
+
+Pre:    The PullConsumer is set up to poll for events.
+Action: Call PullConsumer::disconnect_pull_consumer().
+Expect: Resources are released.
+
+TEST PulC-2: [2.1.4d]
+
+Pre:    The PullConsumer is set up to poll PulS for events.
+Action: Call PullConsumer::disconnect_pull_consumer().
+Expect: PulS.disconnect_pull_supplier() receives a call.
+
+TEST PulC-3: [2.1.5a]
+
+Pre:    The PullConsumer is set up to poll PulS for events.
+Action: Call PullConsumer::disconnect_pull_consumer() twice.
+Expect: The second call returns CORBA::OBJECT_NOT_EXIST exception.
+
+
+
+THE EVENTCHANNEL INTERFACE
+
+TEST EvCh-1: [2.3.1d]
+
+Pre:    An event channel is destroyed.
+Action: Call ::for_suppliers()
+Expect: Raises CORBA::OBJECT_NOT_EXIST exception.
+
+TEST EvCh-2: [2.3.1d]
+
+Pre:    An event channel is destroyed.
+Action: Call ::for_consumers()
+Expect: Raises CORBA::OBJECT_NOT_EXIST exception.
+
+TEST EvCh-3: [2.3.1d]
+
+Pre:    An event channel is destroyed.
+Action: Call ::destroy()
+Expect: Raises CORBA::OBJECT_NOT_EXIST exception.
+
+
+TEST EvCh-4: [2.3.1e]
+
+Pre:    A ConsumerAdmin is otained, and the channel then destroyed.
+Action: Call ::obtain_push_supplier()
+Expect: Raises CORBA::OBJECT_NOT_EXIST exception.
+
+TEST EvCh-5: [2.3.1e]
+
+Pre:    A ConsumerAdmin is otained, and the channel then destroyed.
+Action: Call ::obtain_pull_supplier()
+Expect: Raises CORBA::OBJECT_NOT_EXIST exception.
+
+TEST EvCh-6: [2.3.1e]
+
+Pre:    A SupplierAdmin is otained, and the channel then destroyed.
+Action: Call ::obtain_push_consumer()
+Expect: Raises CORBA::OBJECT_NOT_EXIST exception.
+
+TEST EvCh-7: [2.3.1e]
+
+Pre:    A SupplierAdmin is otained, and the channel then destroyed.
+Action: Call ::obtain_pull_consumer()
+Expect: Raises CORBA::OBJECT_NOT_EXIST exception.
+
+TEST EvCh-8: [2.3.1f]
+
+Pre:    A PushSupplier is connected to a ProxyPushConsumer.
+Action: Call the event channel's ::destroy() method.
+Expect: The PushSupplier is disconnected.
+
+TEST EvCh-9: [2.3.1f]
+
+Pre:    A PullConsumer is connected to a ProxyPullSupplier.
+Action: Call the event channel's ::destroy() method.
+Expect: The PullConsumer is disconnected.
+
+TEST EvCh-10: [2.3.1f]
+
+Pre:    A PullSupplier is connected to a ProxyPullConsumer.
+Action: Call the event channel's ::destroy() method.
+Expect: The PullSupplier is disconnected.
+
+TEST EvCh-11: [2.3.1f]
+
+Pre:    A PushConsumer is connected to a ProxyPushSupplier.
+Action: Call the event channel's ::destroy() method.
+Expect: The PushConsumer is disconnected.
+
+
+
+THE PROXYPUSHCONSUMER INTERFACE
+
+TEST PPshC-1: [2.3.4c]
+
+Pre:    A ProxyPushConsumer is obtained.
+Action: Call ProxyPushConsumer::connect_push_supplier(NIL), then ::push(X)
+Expect: X appears in the ProxyPushConsumer's output.
+
+TEST PPshC-2: [2.3.4e]
+
+Pre:    A ProxyPushConsumer is obtained.
+Action: Call ProxyPushConsumer::connect_push_supplier(PshS), then
+        ::disconnect_push_consumer().
+Expect: PshS.disconnect_push_supplier() receives a call.
+
+TEST PPshC-3: [2.3.4f]
+
+Pre:    A ProxyPushConsumer is obtained.
+Action: Call ProxyPushConsumer::connect_push_supplier(?) twice.
+Expect: The second call returns AlreadyConnected exception.
+
+
+THE PROXYPULLSUPPLIER INTERFACE
+
+TEST PPulS-1: [2.3.5c]
+
+Pre:    A ProxyPullSupplier is obtained.
+Action: Call ProxyPullSupplier::connect_pull_consumer(NIL), then supply event X
+        to the channel, then ::try_pull().
+Expect: try_pull returns event X.
+
+TEST PPulS-2: [2.3.5e]
+
+Pre:    A ProxyPullSupplier is obtained.
+Action: Call ProxyPullSupplier::connect_pull_consumer(PulC), then
+        ::disconnect_pull_supplier().
+Expect: PulC.disconnect_pull_consumer() receives a call.
+
+TEST PPulS-3: [2.3.5f]
+
+Pre:    A ProxyPullSupplier is obtained.
+Action: Call ProxyPullSupplier::connect_pull_consumer(?) twice.
+Expect: The second call returns AlreadyConnected exception.
+
+
+THE PROXYPULLCONSUMER INTERFACE
+
+TEST PPulC-1: [2.3.6b]
+
+Pre:    A ProxyPullConsumer is obtained.
+Action: Call ProxyPullConsumer::connect_pull_supplier(PulS), then
+        ::disconnect_pull_consumer().
+Expect: PulS.disconnect_pull_supplier() receives a call.
+
+TEST PPulC-2: [2.3.6c]
+
+Pre:    A ProxyPullConsumer is obtained.
+Action: Call ProxyPullConsumer::connect_pull_supplier(NIL).
+Expect: returns BAD_PARAM exception.
+
+TEST PPulC-3: [2.3.6d]
+
+Pre:    A ProxyPullConsumer is obtained.
+Action: Call ProxyPullConsumer::connect_pull_supplier(PulS) twice.
+Expect: The second call returns AlreadyConnected exception.
+
+
+THE PROXYPUSHSUPPLIER INTERFACE
+
+TEST PPshS-1: [2.3.7b]
+
+Pre:    A ProxyPushSupplier is obtained.
+Action: Call ProxyPushSupplier::connect_push_consumer(PshC), then
+        ::disconnect_push_supplier().
+Expect: PshC.disconnect_push_consumer() receives a call.
+
+TEST PPshS-2: [2.3.7c]
+
+Pre:    A ProxyPushSupplier is obtained.
+Action: Call ProxyPushSupplier::connect_push_consumer(NIL).
+Expect: returns BAD_PARAM exception.
+
+TEST PPshS-3: [2.3.7d]
+
+Pre:    A ProxyPushSupplier is obtained.
+Action: Call ProxyPushSupplier::connect_push_consumer(PshC) twice.
+Expect: The second call returns AlreadyConnected exception.

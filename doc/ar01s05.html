@@ -1,0 +1,202 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>5. Writing an Event Service Client</title>
+<link rel="stylesheet" href="omnievents.docbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<link rel="home" href="index.html" title="omniEvents">
+<link rel="up" href="index.html" title="omniEvents">
+<link rel="previous" href="ar01s04.html" title="4. Running the examples">
+<link rel="next" href="ar01s06.html" title="6. Notes for Windows Users">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">5. Writing an Event Service Client</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="ar01s04.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title" style="clear: both">
+<a name="id2458280"></a>5. Writing an Event Service Client</h2></div></div>
+<div></div>
+</div>
+<div class="toc"><dl>
+<dt><span class="section"><a href="ar01s05.html#id2458294">5.1. Connecting</a></span></dt>
+<dt><span class="section"><a href="ar01s05.html#id2458483">5.2. Using any type</a></span></dt>
+<dt><span class="section"><a href="ar01s05.html#id2458621">5.3. Disconnecting</a></span></dt>
+</dl></div>
+<p>The examples are a great place to start learning about the event
+    service. Feel free to use them as a starting point for your own clients.
+    The same examples are available as C++, Python and Java. However, this
+    section provides a few more general instructions.</p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2458294"></a>5.1. Connecting</h3></div></div>
+<div></div>
+</div>
+<p>Here's a list of all the ways clients can locate the omniEvents
+      server's EventChannelFactory object:</p>
+<div class="variablelist"><dl>
+<dt><span class="term">by <span class="acronym">IOR</span>. (<span><b class="command">omniEvents
+          -v</b></span>)</span></dt>
+<dd><p>The <tt class="option">-v</tt> option prints the
+            EventChannelFactory's <span class="acronym">IOR</span>. You can then use a
+            straightforward <tt class="literal">string_to_object()</tt> method call
+            to turn this into an object reference.</p></dd>
+</dl></div>
+<div class="variablelist"><dl>
+<dt><span class="term">by <tt class="literal">corbaloc::host:port/omniEvents</tt></span></dt>
+<dd><p>The EventChannelFactory is registered in the omniORB INSPOA
+            as <tt class="literal">omniEvents</tt> which means that you can use the
+            human readable &#8220;<span class="quote">corbaloc</span>&#8221; string above instead of the
+            <span class="acronym">IOR</span>. Replace <tt class="literal">host</tt> with
+            omniEvents' hostname and <tt class="literal">port</tt> with the
+            <span class="acronym">TCP</span> port: 11169 (or whatever you chose with the
+            <tt class="option">-p</tt> option).</p></dd>
+</dl></div>
+<div class="variablelist"><dl>
+<dt><span class="term"><tt class="literal">resolve_initial_references("EventService")</tt></span></dt>
+<dd>
+<p>If <tt class="filename">omniORB.cfg</tt> is properly configured,
+            you can use <tt class="literal">resolve_initial_references()</tt> to
+            find the event service, just as is usually done for the Naming
+            Service. Just add a line like this:</p>
+<pre class="programlisting">InitRef = EventService=corbaloc::host:port/omniEvents</pre>
+</dd>
+</dl></div>
+<div class="variablelist"><dl>
+<dt><span class="term">The naming service (<span><b class="command">omniEvents -N
+          NAME</b></span>)</span></dt>
+<dd><p>omniEvents always registers the EventChannelFactory as a
+            top-level entry in the naming service. Use the <tt class="option">-N</tt>
+            option to control the context, id &amp; kind.
+            (<tt class="literal">EventChannelFactory</tt> by default).</p></dd>
+</dl></div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2458483"></a>5.2. Using <tt class="literal">any</tt> type</h3></div></div>
+<div></div>
+</div>
+<p>The &#8220;<span class="quote">events</span>&#8221; pushed and pulled around by the Event
+      Service are simply CORBA <tt class="literal">any</tt> values. The
+      <tt class="literal">any</tt> type can hold any <span class="acronym">CORBA</span> type.
+      The examples simply send a <tt class="literal">long</tt> value, but a more
+      realistic problem would employ a user-defined struct as the
+      event.</p>
+<p>For user-defined types you first need to define the type in
+      <span class="acronym">IDL</span>, then compile the <span class="acronym">IDL</span>. For
+      omniORB with C++ you would use <span><b class="command">omniidl -bcxx -Wba</b></span>.
+      The <tt class="option">-Wba</tt> generates the operators you will need to use
+      your type with <tt class="literal">CORBA::Any</tt>.</p>
+<p>Here's a small example:</p>
+<pre class="programlisting">  module MyMessages {
+    struct NVPair {
+      NameType  name;
+      ValueType value;
+    };
+  };</pre>
+<p>Assuming you compile this <span class="acronym">IDL</span> correctly, you
+      will have insertion &amp; extraction methods:
+      <tt class="literal">operator&gt;&gt;=()</tt> and
+      <tt class="literal">operator&lt;&lt;=()</tt>. Here are examples of how to use
+      them:</p>
+<pre class="programlisting">  CORBA::Any data;
+
+  // Insert by value
+  MyMessages::NVPair inputNvPair = ...
+  data &lt;&lt;= inputNvPair; // takes a deep copy.
+
+  // Insert by pointer
+  MyMessages::NVPair* inputNvPairPtr = ...
+  data &lt;&lt;= inputNvPairPtr; // does NOT copy - assumes ownership
+  //XX delete inputNvPairPtr;  &lt;== NO!! 
+  .
+  .
+  .
+  // Extract
+  const MyMessages::NVPair* outputNvPairPtr = NULL;
+  if(data &gt;&gt;= outputNvPairPtr)
+  {
+    // Use outputNvPairPtr BUT DON'T DELETE IT!!
+  }
+  else
+  {
+    cerr&lt;&lt;"Wrong type!!"&lt;&lt;endl;
+  }</pre>
+<p>Notice the memory ownership issues. It's best to double check each
+      time you use <tt class="literal">&lt;&lt;=</tt> or
+      <tt class="literal">&gt;&gt;=</tt> until you're confident you've got it
+      right.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2458621"></a>5.3. Disconnecting</h3></div></div>
+<div></div>
+</div>
+<p>All Supplier and Consumer objects have a
+      <tt class="literal">disconnect_*()</tt> method. This means that each
+      connection has two disconnect methods, one at each end. Which method
+      should you call to terminate the connection?</p>
+<p>The best approach is to call the Proxy's
+      <tt class="literal">disconnect_*()</tt>, rather than your own. (Either will
+      work, but instructing the Proxy to disconnect is more efficient.)</p>
+<p>The rule for implementing your own servant's
+      <tt class="literal">disconnect_*()</tt> method is quite simple. Each
+      <tt class="literal">disconnect_*()</tt> method should call the other
+      <tt class="literal">disconnect_*()</tt> method. It is the responsibility of
+      the Event Service end (the Proxy) to ensure that an infinite loop
+      doesn't occur. So clients don't have to worry - they should always just
+      call the Proxy's <tt class="literal">disconnect_*()</tt> when their own
+      <tt class="literal">disconnect_*()</tt> is called.</p>
+<p>There is of course NO GUARANTEE that a
+      <tt class="literal">disconnect_*()</tt> method will only be called once. You
+      should never assume that your servants' methods will not be called until
+      the object has actually been deactivated in the POA.</p>
+<p>It is possible to connect to ProxyPushConsumer &amp;
+      ProxyPullSupplier objects without providing an address for callbacks.
+      When you do that, the proxies cannot call your disconnect method. If you
+      choose to connect to these proxies without providing an address for
+      callbacks, then you must clean up your own objects without help from the
+      Event Service.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Note</h3>
+<p>These semantics only apply to Event Service v1.1 implementations
+        such as omniEvents v2.6. Earlier specifications were vague about
+        disconnection semantics, so you must be VERY careful if you want to
+        interoperate with an older Event Service implementation (such as
+        omniEvents v2.4 and earlier).</p>
+</div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="ar01s04.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">4. Running the examples </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> 6. Notes for Windows Users</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

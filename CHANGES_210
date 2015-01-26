@@ -1,0 +1,93 @@
+Release Notes for 2.1.0  (15th August 2000)
+=======================
+
+
+This is a major release which fixes a number of bugs in omniEvents 2.0.1
+as well as providing build compatibility with omniORB 3.0.1.
+
+omniEvents 2.1.0 makes use of omniORB3 specific features which prevents
+building with all previous versions of omniORB2.
+
+The last release of omniEvents was 2.0.1 (15th Jan 2000). The previous
+major release was 2.0.0 (20th Nov 1999).
+
+The source code distribution for omniEvents 2.1.0 is available at :
+
+http://www.uk.research.att.com/omniORB/contribapp.html#omniEvents
+
+
+Changes since 2.0.1
+-------------------
+
+1. Port to omniORB 3.0.1.
+
+   omniEvents 2.0.1 will NOT build against omniORB 3.0.0 due to a bug in the
+   initial release where the omniidl compiler fails to generate complete
+   interface skeletons.
+
+   omniEvents 2.0.1 should be built against the latest omniORB 3.0.1 CVS
+   snapshot available at:
+
+   ftp://ftp.uk.research.att.com/pub/omniORB/omniORB_3_snapshots/omniORB3-latest.tar.gz
+   
+   omniEvents 2.0.1 will NOT build against any of the omniORB 2.x.x releases.
+   due to changes in the generated skeleton inheritance tree.
+
+2. New MaxQueueLength QOS Parameter
+
+   The EventChannelFactory now accepts the MaxQueueLength QOS parameter to
+   set the maximum number of events queued by the channel. This parameter
+   is used to decide if an event provided by a supplier should be queued
+   by the channel:
+
+   o Events are discarded in FIFO order (ie first received is discarded)
+   o Events are discarded silently, ie No exceptions are raised.
+   o The default is 0 meaning no limit applies.
+
+   The maximum number of events queued on behalf of each consumer is still
+   controlled using the MaxEventsPerConsumer QOS parameter.
+
+3. New configuration file
+
+   The directory config now has a config.mk file used to specify site-specific
+   information. This currently includes parameters to specify the following:
+
+   o STL behaviour with respect to default parameters.
+   o Location of STL headers
+   o Location and name of the STL library.
+   o Default location of persistency log files.
+   o Default persistency checkpoint period.
+
+4. Bugs fixed.
+
+  - A bug in the logfile persistency prevented checkpoints from occuring
+    and as a result the log file was not being culled.
+
+  - Incorrect OEP_ecps constructor member initialisation caused build
+    problems on some platforms.
+
+  - Setting MaxEventsPerConsumer to 1 (eg by running eventc -m 1) caused
+    a segmentation fault in the omniEvents server.
+
+  - Fixed build problems for DEC platform.
+
+  - Fixed build problems for SGI platform.
+
+  - Fixed build problems for Red Hat / gcc platform.
+
+  - Better handling of STL. omniEvents now assumes by default that the STL
+    container classes do not accept default ordering and allocator arguments.
+    This behaviour can be overriden using the STL_HAS_DEFAULT_ARGS parameter
+    in the config/config.mk file.
+
+5. Known Issues
+
+  - The DLL produced for x86_nt_4.0 is incomplete. When linking against it
+    you need to also include the EventChannelAdminSK.o and CosLifeCycleSK.o
+    stub objects. For more details see the dir.mk file in src/sharedlib.
+
+  - In agent mode (ie with only PushConsumers and PullSuppliers connected to
+    an event channel) the response of the event channel degrades considerably
+    if a PullSupplier is unreachable (eg COMMS_FAILURE). The reason for this is
+    that the polling is done sequentially in one thread. There is a plan to
+    change it so that each ProxyPullConsumer polls in its own thread.

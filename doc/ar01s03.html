@@ -1,0 +1,163 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>3. How to Set Configuration Options</title>
+<link rel="stylesheet" href="omnievents.docbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<link rel="home" href="index.html" title="omniEvents">
+<link rel="up" href="index.html" title="omniEvents">
+<link rel="previous" href="ar01s02.html" title="2. Build and Installation">
+<link rel="next" href="ar01s04.html" title="4. Running the examples">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">3. How to Set Configuration Options</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="ar01s02.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title" style="clear: both">
+<a name="id2457381"></a>3. How to Set Configuration Options</h2></div></div>
+<div></div>
+</div>
+<div class="toc"><dl>
+<dt><span class="section"><a href="ar01s03.html#id2457434">3.1. Unix SysV-style service.</a></span></dt>
+<dt><span class="section"><a href="ar01s03.html#id2457490">3.2. Windows service.</a></span></dt>
+<dt><span class="section"><a href="ar01s03.html#id2457579">3.3. Compile-time customisation</a></span></dt>
+</dl></div>
+<p>This section tells you how to set configuration options, not what
+    options are available. For a detailed description of the available
+    configuration options, see the <a href="re01.html" title="omniEvents">omniEvents
+    reference</a> section.</p>
+<p>See also the <a href="re03.html" title="eventc">eventc reference</a>
+    section, for a description of how to configure new event channels at
+    run-time.</p>
+<p>omniEvents' default &#8220;<span class="quote">out of the box</span>&#8221; set-up is fit for
+    most purposes. You only need to modify the configuration if you are
+    interested in advanced features such as fault tolerant failover, or
+    changing the default TCP port.</p>
+<p>In general, command-line parameters are stored somewhere, and
+    retrieved each time the daemon is started. The method of storing parameters
+    is different on Unix and Windows. In addition, there are a number of
+    defaults that can be set at compile-time.</p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2457434"></a>3.1. Unix SysV-style service.</h3></div></div>
+<div></div>
+</div>
+<p>The SysV <span><b class="command">init</b></span> program starts the omniEvents
+      daemon from the script
+      <tt class="filename">/etc/init.d/omniorb-eventservice</tt>. You can also use
+      this script to start and stop the service manually:</p>
+<p>syntax: <span><b class="command">/etc/init.d/omniorb-eventservice
+      [start|stop|restart]</b></span></p>
+<p>The script reads omniEvents' configuration options from the file
+      <tt class="filename">/etc/default/omniorb-eventservice</tt>. Edit this file
+      to change the options.</p>
+<p>See also: <a href="re01.html" title="omniEvents">omniEvents</a>
+      reference.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2457490"></a>3.2. Windows service.</h3></div></div>
+<div></div>
+</div>
+<p>The omniEvents Windows service stores options in the Registry key
+      <tt class="literal">HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\omniEvents</tt>.
+      They are read each time the service starts. Usually the only option you
+      should set is the <tt class="option">-t FILENAME</tt> option that directs
+      trace output to the named file.</p>
+<p>You set the service options by listing them after the
+      <span><b class="command">install</b></span> or <span><b class="command">setoptions</b></span>
+      commands:</p>
+<p>syntax: <span><b class="command">omniEvents install OPTIONS</b></span></p>
+<p>syntax: <span><b class="command">omniEvents setoptions OPTIONS</b></span></p>
+<p>You can see the currently stored options with the
+      <span><b class="command">getoptions</b></span> command:</p>
+<p>syntax: <span><b class="command">omniEvents getoptions</b></span></p>
+<p>See also: <a href="re02.html" title="omniEvents-win32">omniEvents-win32</a>
+      reference.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2457579"></a>3.3. Compile-time customisation</h3></div></div>
+<div></div>
+</div>
+<p>Some compile-time parameters may only be adjusted by manually
+      editing the file <tt class="filename">src/defaults.h</tt>:</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>the default data directory
+          [<tt class="filename">/var/lib/omniEvents</tt> on Unix,
+          <tt class="filename">C:\omniEvents</tt> on Windows.]</p></li>
+<li><p>the name of the environment variable that sets the data
+          directory [<tt class="literal">OMNIEVENTS_LOGDIR</tt>]</p></li>
+<li><p>the period between data file checkpoints [<tt class="literal">900</tt>
+          seconds]</p></li>
+<li>
+<p>Default event channel parameters:</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><tt class="literal">PullRetryPeriod_ms</tt></td>
+<td>Time between <tt class="literal">pull()</tt> calls.</td>
+<td>[1 second]</td>
+</tr>
+<tr>
+<td><tt class="literal">MaxQueueLength</tt></td>
+<td>Number of events to queue.</td>
+<td>[1023]</td>
+</tr>
+<tr>
+<td><tt class="literal">MaxNumProxies</tt></td>
+<td>Limit on number of ProxyPullSuppliers.</td>
+<td>[1024]</td>
+</tr>
+<tr>
+<td><tt class="literal">CyclePeriod_ns</tt></td>
+<td>Time between batch transfer of events.</td>
+<td>[0.1 second]</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+</ul></div>
+<p>Please refer to the <tt class="filename">src/defaults.h</tt> file for
+      descriptions of all parameters.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="ar01s02.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">2. Build and Installation </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> 4. Running the examples</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

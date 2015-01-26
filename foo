@@ -1,0 +1,39 @@
+omniEvents: [135297032] Servant::Servant() count=1
+omniEvents: [135352276] Servant::Servant() count=2
+omniEvents: [135353288] Servant::Servant() count=3
+omniEvents: [135353288] Activating object 1.12727.428a6952/ConsumerAdmin
+omniEvents: [135357560] Servant::Servant() count=4
+omniEvents: [135357616] Servant::Servant() count=5
+omniEvents: [135357560] Activating object 1.12727.428a6952/SupplierAdmin
+omniEvents: [135358744] Servant::Servant() count=6
+omniEvents: [135358744] Activating object 1.12727.428a6952/ProxyPushSupplierManager
+omniEvents: [135361544] Servant::Servant() count=7
+omniEvents: [135361544] ProxyPushSupplierManager::incarnate()
+omniEvents: [135361544] Activating object 1.12727.428a6952.ProxyPushSupplier/3.12727.428a6959
+omniEvents: [135363512] Servant::Servant() count=8
+omniEvents: [135363512] Activating object 1.12727.428a6952/ProxyPullSupplierManager
+omniEvents: [135363392] Servant::Servant() count=9
+omniEvents: [135363392] Activating object 1.12727.428a6952.ProxyPullSupplier/b.12727.428a6963
+omniEvents: [135352276] Activating object 1.12727.428a6952/EventChannel
+omniEvents: [135365292] Servant::Servant() count=10
+omniEvents: [135365944] Servant::Servant() count=11
+omniEvents: [135365944] Activating object 2.12727.428a6954/ConsumerAdmin
+omniEvents: [135370216] Servant::Servant() count=12
+omniEvents: [135370272] Servant::Servant() count=13
+omniEvents: [135370216] Activating object 2.12727.428a6954/SupplierAdmin
+omniEvents: [135365292] Activating object 2.12727.428a6954/EventChannel
+omniEvents: [135297032] Activating object omniINSPOA/omniEvents
+omniEvents: [Wed May 18 20:16:47 2005]  Checkpointing Phase 1: Prepare.
+omniEvents: [135363392] Servant::~Servant() count=12
+omniEvents: [135361544] ProxyPushSupplierManager::etherealize()
+omniEvents: [135352276] Servant::~Servant() count=11
+omniEvents: [135357616] Servant::~Servant() count=10
+omniEvents: [135357560] Servant::~Servant() count=9
+omniEvents: [135358744] Servant::~Servant() count=8
+omniEvents: [135363512] Servant::~Servant() count=7
+omniEvents: [135353288] Servant::~Servant() count=6
+omniEvents: [135365292] Servant::~Servant() count=5
+omniEvents: [135370272] Servant::~Servant() count=4
+omniEvents: [135370216] Servant::~Servant() count=3
+omniEvents: [135365944] Servant::~Servant() count=2
+omniEvents: [135297032] Servant::~Servant() count=1

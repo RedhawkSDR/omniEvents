@@ -1,0 +1,139 @@
+//                            Package   : omniEvents
+// idl/omniEvents.idl         Created   : 2004-05-23
+//                            Author    : Alex Tingle
+//
+//    Copyright (C) 2004 Alex Tingle.
+//
+//    This file is part of the omniEvents application.
+//
+//    omniEvents is free software; you can redistribute it and/or
+//    modify it under the terms of the GNU Lesser General Public
+//    License as published by the Free Software Foundation; either
+//    version 2.1 of the License, or (at your option) any later version.
+//
+//    omniEvents is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//    Lesser General Public License for more details.
+//
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+
+#ifndef _OMNIEVENTS_IDL_
+#define _OMNIEVENTS_IDL_
+
+#include <CosEventChannelAdmin.idl>
+
+// =============================================================================
+#pragma prefix "openorb.org"
+
+/**
+ * DO NOT USE THIS MODULE UNLESS YOU ARE USING OPENORB.
+ * The module `openorb.org/event' is provided for compatibility with
+ * OpenOrb.
+ */
+module event
+{
+  exception NameAlreadyUsed {};
+  exception EventChannelNotFound {};
+
+  interface EventChannelFactory
+  {
+    CosEventChannelAdmin::EventChannel create_channel( in string channel_name )
+        raises( NameAlreadyUsed );
+
+    CosEventChannelAdmin::EventChannel join_channel( in string channel_name )
+        raises( EventChannelNotFound );
+  };
+};
+// =============================================================================
+
+#include <CosLifeCycle.idl>
+#include "FT.idl"
+#include "EventChannelAdmin.idl"
+
+#pragma prefix "omni"
+
+module omniEvents
+{
+
+  /**
+   * The omniEvents event channel. Inherits the method is_alive() from
+   * FT::PullMonitorable.
+   */
+  interface EventChannel:
+    CosEventChannelAdmin::EventChannel,
+    FT::PullMonitorable
+  {
+    // boolean is_alive();   <== inherited from FT::PullMonitorable
+  };
+
+  /**
+   * The omniEvents 'server'.
+   *
+   * Inherits the following methods from CosLifeCycle::GenericFactory:
+   *  - boolean <b>supports</b>(in Key)
+   *  - Object  <b>create_object</b>(in Key, in Criteria)
+   *
+   * Key should always be {id:"EventChannel", kind:"object interface"}.
+   *
+   * <b>Valid criteria are:</b>
+   * 
+   * @param PullRetryPeriod_ms [Type: unsigned long. Unit: millisecond.
+   *          Default: 1000 (1 second)]\n
+   *          The delay between calls to pull() made by omniEvents out
+   *          to client's PullSupplier objects.
+   * @param MaxQueueLength [Type: unsigned long. Default: 1023]\n
+   *          The number of events to store ready to sends out to Consumer
+   *          objects. When the queue overflows, the oldest events are
+   *          discarded first.
+   * @param MaxNumProxies [Type: unsigned long. Default: 1024]\n
+   *          Limits the number of ProxyPullSuppliers that an EventChannel
+   *          can support. When the limit is exceeded, the least active proxy
+   *          is disconnected.
+   * @param CyclePeriod_ns [Type: unsigned long. Unit: nanosecond.
+   *          Default: 100000000 (0.1 second)]\n
+   *          Sets the cycle period of the channel. This is the time that the
+   *          channel waits before transferring messages from the incoming
+   *          queue to the outgoing queue. While messages are being
+   *          transferred, incoming calls are queued. The default is 0.1
+   *          seconds. Applications that require very rapid message delivery
+   *          should reduce the period.
+   * @param InsName [Type: string. Default: None]\n
+   *          This parameter sets the name by which the EventChannel is
+   *          known in omniEvents INSPOA. You can then refer to the channel
+   *          with a corbaloc string.
+   * @param FilterId [Type: string. Default: None]\n
+   *          Creates a filtered event channel. The value should be a
+   *          RepositoryId. The EventChannel silently discards all incoming
+   *          events whose type does not match the RepositoryId.
+   *
+   * Inherits the following method from FT::PullMonitorable:
+   *  - boolean <b>is_alive</b>()
+   */
+  interface EventChannelFactory:
+    CosLifeCycle::GenericFactory,
+    FT::PullMonitorable,
+    EventChannelAdmin::EventChannelFactory,
+    event::EventChannelFactory
+  {
+    // == CosLifeCycle::GenericFactory ==
+    //
+    // boolean supports( in Key k );
+    // Object  create_object( in Key k, in Criteria the_criteria )...;
+
+    // == FT::PullMonitorable ==
+    //
+    // boolean is_alive();
+
+    // == event::EventChannelFactory ==
+    //
+    // EventChannel create_channel( in string channel_name )...; *DO NOT USE*
+    // EventChannel join_channel( in string channel_name )...;   *DO NOT USE*
+  };
+
+};
+
+#endif // _OmniEvents_idl_

@@ -1,0 +1,120 @@
+Release Notes for 2.0.1  (15th January 2000)
+=======================
+
+
+This release is a minor release which fixes a number of bugs in 
+omniEvents 2.0.0. This release adds support for multiple
+SupplierAdmin and ConsumerAdmin objects per event channel. To
+re-use your existing persistence log files you will need to 
+modify them as described in sections 1 & 3 below.
+
+Also, as from this release omniEvents is supplied in a single
+library in both static and dynamic versions.
+
+The last release of omniEvents was 2.0.0 (20th Nov 1999). The
+previous major release was 1.0.3 (11th May 1999).
+
+The source code distribution for omniEvents 2.0.1 is available at :
+
+http://www.uk.research.att.com/omniORB/contribapp.html#omniEvents
+
+
+Changes since 2.0.0
+-------------------
+
+1. Support for multiple Admin objects per event channel.
+
+  omniEvents now creates by default new supplierAdmin and consumerAdmin
+  objects each time the for_suppliers() and for_consumers() methods are
+  called on an EventChannel_i interface. This change has been introduced
+  to more closely align omniEvents with the Notification Service to allow
+  for the eventual implementation of QOS parameters and filters at the
+  Admin object level.
+
+  If you wish to re-use your existing persistence log files you will
+  need to make some minor changes to them as described below. The files
+  you should modify are located in the $OMNIEVENTS_LOGDIR and are named:
+
+  omnievents-<hostname>.log and
+  omnievents-<hostname>.bak
+
+  1.1 Delete all instances of COMMON and channelFactory but the last in
+      each file.
+
+  1.2 Move each end every instance of pxyPullSupplier and pxyPushSupplier
+      into the corresponding consumerAdmin instance immediatly above it. 
+
+  1.3 Move each end every instance of pxyPullConsumer and pxyPushConsumer
+      into the corresponding supplierAdmin instance immediatly above it. 
+
+  Notes:
+
+  - You don't need to re-indent the lines you move.
+
+  - Make sure you delete/move the entire instance (i.e including the start
+    and closing braces - and everything else in between).
+
+2. Restructured the containment of Proxies.
+
+  The proxies for suppliers and consumers are no longer contained
+  directly under the event channel. Instead they are located under
+  the corresponding SupplierAdmin or ConsumerAdmin object initialy
+  used to create them.
+
+3. Removed factory dependency on naming service.
+
+  The EventChannelFactory_i class no longer persists its name or hence
+  bind itself with the naming service when restarted from persistency. The
+  default factory created by the omniEvents executable is still bound to
+  the naming service by the omniEvents executable (as was done prevously)
+  but it is no longer re-bound during re-starts.
+
+  If you wish to re-use your existing persistence log files you will
+  need to make some minor changes to them as described below. The files
+  you should modify are located in the $OMNIEVENTS_LOGDIR and are named:
+
+  omnievents-<hostname>.log and
+  omnievents-<hostname>.bak
+
+  3.1 Delete all instances of COMMON and channelFactory but the last in
+      each file.
+
+  3.2 Move the port entry in the instance of COMMON into the channelFactory
+      instance.
+
+  3.3 Delete the entire instance of COMMON.
+
+  Notes:
+
+  - You don't need to re-indent the line.
+
+4. Examples no longer compiled with omniEvents libraries.
+
+  The examples provided are no longer compiled using the omniEvents
+  libraries but with the generated stubs instead. This is to re-enforce
+  the fact that they are not dependent on omniEvents.
+
+5. Bugs fixed.
+
+  - Push Suppliers can now be connected to a ProxyPushConsumer using a nil
+    reference. The ProxyPushConsumer_i::connect_push_supplier() method has
+    been changed to allow a nil parameter to be passed and no longer throws
+    a CORBA::BAD_PARAM exception.
+
+  - Pull Consumers can now be connected to a ProxyPullSupplier using a nil
+    reference. The ProxyPullSupplier_i::connect_pull_consumer() method has
+    been changed to allow a nil parameter to be passed and no longer throws
+    a CORBA::BAD_PARAM exception.
+
+  - Fixed memory leak when persisting connected proxies. Failed to delete
+    stringified IOR.
+
+  - Fixed broken persistency during restart. omniEvents failed to re-open
+    logfile.
+
+  - Removed requirement for extern usage() function from omniEventsLog.
+
+  - Removed inclusion of CosLifeCycle.idl in CosEventChannelAdmin.idl.
+
+  - Modified pull model thread signaling to use counting semaphores to
+    avoid missing pull requests.

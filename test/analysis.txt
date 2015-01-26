@@ -1,0 +1,266 @@
+SHALL   A complient implementation shall behave as described.
+FORBID  A complient implementation shall NOT behave as described.
+        (There can be no direct tests for such requirements.)
+ALLOW   A compliant implementation MAY behave as described.
+        (There may be tests, but they cannot fail.)
+
+
+2.1.1 The PushConsumer Interface
+
+SHALL  a) A supplier communicates event data to the consumer by invoking the
+          push operation and passing the event data as a parameter.
+
+::push
+
+FORBID b) shall NOT raise user exceptions other than CosEventComm::Disconnected.
+
+::disconnect_push_consumer
+
+FORBID c) shall raise no user exception.
+
+SHALL  d) terminates event communication.
+
+SHALL  e) releases resources used at the consumer to support the event
+          communication
+
+ALLOW  f) causes the implementation to call the disconnect_push_supplier
+          operation on the corresponding PushSupplier interface (if that
+          interface is known).
+
+
+2.1.2 The PushSupplier Interface
+
+::disconnect_push_supplier
+
+FORBID a) shall raise no user exception.
+
+FORBID b) terminates event communication. No further events are pushed.
+ 
+SHALL  c) causes the implementation to call the disconnect_push_consumer
+          operation on the corresponding PushConsumer interface (if that
+          interface is known[1]).
+
+
+2.1.3 The PullSupplier Interface
+
+::pull
+
+FORBID a) shall NOT raise user exceptions other than CosEventComm::Disconnected.
+
+SHALL  b) blocks until the event data is available or an exception is raised.
+
+ALLOW  c) may raise a system exception (OBVIOUSLY!).
+
+SHALL  d) returns the event data to the consumer.
+
+::try_pull
+
+FORBID e) shall NOT raise user exceptions other than CosEventComm::Disconnected.
+
+FORBID f) does not block
+
+SHALL  g) if the event data is available, it returns the event data and sets the
+          has_event parameter to true.
+
+SHALL  h) if the event is not available, it sets the has_event parameter to
+          false and the event data is returned as `long' with an undefined
+          value.
+
+::disconnect_pull_supplier
+
+FORBID i) shall raise no user exception.
+
+SHALL  j) terminates the event communication
+
+SHALL  k) releases resources used at the supplier to support the event
+          communication.
+
+ALLOW  l) causes the implementation to call the disconnect_pull_consumer
+          operation on the corresponding PullConsumer interface (if that
+          interface is known).
+
+
+2.1.4 The PullConsumer Interface
+
+::disconnect_pull_consumer
+
+FORBID a) shall raise no user exception.
+
+FORBID b) terminates the event communication. No further pull or try_pull calls
+          may be made.
+
+SHALL  c) releases resources used at the consumer to support the event
+          communication.
+
+SHALL  d) causes the implementation to call the disconnect_pull_supplier
+          operation on the corresponding PullSupplier interface (if that
+          interface is known[1]).
+
+
+2.1.5 Disconnection Behavior
+
+SHALL  a) If a consumer or supplier has received a disconnect call and
+          subsequently receives another disconnect call, it shall raise a
+          CORBA::OBJECT_NOT_EXIST exception.
+
+
+2.2.3 Mixed Style Communication with an Event Channel
+
+a) An event channel can communicate with a supplier using one style of communication, and communicate with a consumer using a different style of communication.
+
+
+2.2.4 Multiple Consumers and Multiple Suppliers
+
+a) An event channel can also provide many-to-many communication.
+
+b) Subject to the quality of service of a particular implementation, an event channel provides an event to all consumers.
+
+c) An event channel can support consumers and suppliers using different communication models.
+
+d) If an event channel has pull suppliers, it continues to pull events from the suppliers, regardless of whether any consumers are connected to the channel.
+
+
+2.2.5 Event Channel Administration
+
+a) When an event channel is created, no suppliers or consumers are connected to the event channel.
+
+b) Upon creation of the channel, the factory returns an object reference that supports the EventChannel interface,
+
+c) Proxies are in one of three states: disconnected, connected, or destroyed.
+
+d) Push/pull operations are only valid in the connected state.
+
+e) Figure 2-6 gives a state diagram for a proxy:
+
+              obtain             connect         disconnect
+              /                  /               /
+             /                  /               /
+   (start) ----> DISCONNECTED ----> CONNECTED ----> DESTROYED
+                                     |     |
+                                     |     |
+                                     +-->--+
+                                         \
+                                          \
+                                          event communication   
+
+
+2.3 The CosEventChannelAdmin Module
+
+
+2.3.1 The EventChannel Interface
+
+FORBID a) ::for_consumers shall raise no user exception.
+
+FORBID b) ::for_suppliers shall raise no user exception.
+
+::destroy
+
+FORBID c) shall raise no user exception.
+
+SHALL  d) destroys the event channel.
+
+SHALL  e) destroys all ConsumerAdmin and SupplierAdmin objects that were created
+          via that channel.
+
+SHALL  f) Destruction of a ConsumerAdmin or SupplierAdmin object causes the
+          implementation to invoke the disconnect operation on all proxies that
+          were created via that ConsumerAdmin or SupplierAdmin object.
+
+
+2.3.2 The ConsumerAdmin Interface
+
+FORBID a) ::obtain_push_supplier shall raise no user exception.
+
+FORBID b) ::obtain_pull_supplier shall raise no user exception.
+
+
+2.3.3 The SupplierAdmin Interface
+
+FORBID a) obtain_push_consumer shall raise no user exception.
+
+FORBID b) obtain_pull_consumer shall raise no user exception.
+
+
+2.3.4 The ProxyPushConsumer Interface
+
+::connect_push_supplier
+
+FORBID a) shall NOT raise user exceptions other than
+          CosEventChannelAdmin::AlreadyConnected.
+
+FORBID b) shall not raise an exception if a nil object reference is provided.
+
+SHALL  c) If a nil object reference is provided, events from the supplier shall
+          still be accepted as normal.
+
+ALLOW  d) If a nil object reference is provided the supplier may be disconnected
+          from the channel without being informed.
+
+SHALL  e) If a non-nil reference is passed to connect_push_supplier, the
+          implementation calls disconnect_push_supplier via that reference when
+          the ProxyPushConsumer is destroyed.
+
+SHALL  f) If the ProxyPushConsumer is already connected to a PushSupplier, then
+          the AlreadyConnected exception is raised.
+
+
+2.3.5 The ProxyPullSupplier Interface
+
+::connect_pull_consumer
+
+FORBID a) shall NOT raise user exceptions other than
+          CosEventChannelAdmin::AlreadyConnected.
+
+FORBID b) shall not raise an exception if a nil object reference is provided. 
+
+SHALL  c) If a nil object reference is provided, events shall still be provided
+          to the PullConsumer as normal.
+
+ALLOW  d) If a nil object reference is provided the consumer may be disconnected
+          from the channel without being informed.
+
+SHALL  e) If a non-nil reference is passed to connect_pull_consumer, the
+          implementation calls disconnect_pull_consumer via that reference when
+          the ProxyPullSupplier is destroyed.
+
+SHALL  f) If the ProxyPullSupplier is already connected to a PullConsumer, then
+          the AlreadyConnected exception is raised.
+
+
+2.3.6 The ProxyPullConsumer Interface
+
+FORBID a) ::connect_pull_supplier shall NOT raise user exceptions other than
+          CosEventChannelAdmin::AlreadyConnected &
+          CosEventChannelAdmin::TypeError.
+
+SHALL  b)  The implementation calls disconnect_pull_supplier on the reference
+           passed to connect_pull_supplier when the ProxyPullConsumer is
+           destroyed.
+
+SHALL  c) Implementations shall raise the CORBA standard BAD_PARAM exception if
+          a nil object reference is passed to the connect_pull_supplier
+          operation.
+
+SHALL  d) If the ProxyPullConsumer is already connected to a PullSupplier, then
+          the AlreadyConnected exception is raised.
+
+
+2.3.7 The ProxyPushSupplier Interface
+
+FORBID a) ::connect_push_consumer shall NOT raise user exceptions other than
+          CosEventChannelAdmin::AlreadyConnected &
+          CosEventChannelAdmin::TypeError.
+
+SHALL  b) The implementation calls disconnect_push_consumer on the reference
+          passed to connect_push_consumer when the ProxyPushSupplier is
+          destroyed.
+
+SHALL  c) Implementations shall raise the CORBA standard BAD_PARAM exception if
+          a nil object reference is passed to the connect_push_consumer
+          operation.
+
+SHALL  d) If the ProxyPushSupplier is already connected to a PushConsumer, then
+          the AlreadyConnected exception is raised.
+
+
+[1] - In this case, the reference MUST be known, in order for the object to function.

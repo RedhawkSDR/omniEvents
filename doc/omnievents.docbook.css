@@ -1,0 +1,49 @@
+body {
+  font-family:trebuchet ms,helvetica,tahoma,sans-serif;
+  font-size:10pt;
+  margin:10px 10% 10px 10%;
+}
+
+h1, h2, h3, h4, h5 { 
+  color:maroon; 
+  font-family:garamond,times new roman,times,serif;
+  font-style:italic;
+}
+
+h1,h2 { font-size:24pt; }
+h3 { font-size:18pt; }
+
+span.term { 
+    font-weight: bold; 
+}
+
+div.sidebar { 
+    background: #F0F0F0; 
+    border: 1px solid gray; 
+    padding: 5px; 
+    margin: 20px; 
+}
+
+pre.programlisting { 
+    background: #F0F0F0; 
+    border: 1px solid gray; 
+    padding: 2px; 
+    font-size: 10pt;
+    white-space: pre;
+}
+
+.informaltable table {
+  border:none;
+}
+.informaltable td, .informaltable th {
+  border:none;
+  padding:2pt;
+}
+
+.navheader, .navfooter, .copyright, .legalnotice, .abstract {
+  font-family:arial,helvetica,sans-serif;
+  font-size:smaller;
+}
+.abstract {
+  font-weight:bold;
+}

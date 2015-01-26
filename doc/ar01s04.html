@@ -1,0 +1,282 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>4. Running the examples</title>
+<link rel="stylesheet" href="omnievents.docbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<link rel="home" href="index.html" title="omniEvents">
+<link rel="up" href="index.html" title="omniEvents">
+<link rel="previous" href="ar01s03.html" title="3. How to Set Configuration Options">
+<link rel="next" href="ar01s05.html" title="5. Writing an Event Service Client">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">4. Running the examples</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="ar01s03.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title" style="clear: both">
+<a name="id2457752"></a>4. Running the examples</h2></div></div>
+<div></div>
+</div>
+<div class="toc"><dl>
+<dt><span class="section"><a href="ar01s04.html#id2457818">4.1. Start the Naming Service (omniNames)</a></span></dt>
+<dt><span class="section"><a href="ar01s04.html#id2457838">4.2. Start the omniEvents daemon
+      (omniEvents)</a></span></dt>
+<dt><span class="section"><a href="ar01s04.html#id2457986">4.3. Create an Event Channel
+      (eventc)</a></span></dt>
+<dt><span class="section"><a href="ar01s04.html#id2458093">4.4. Run one or more example suppliers/consumers</a></span></dt>
+</dl></div>
+<p>The examples programs (<span><b class="command">eventc</b></span>,
+    <span><b class="command">pushsupp</b></span>, <span><b class="command">pushcons</b></span>,
+    <span><b class="command">pullsupp</b></span>, <span><b class="command">pullcons</b></span>) are also
+    available as Python and Java. Look in
+    <tt class="filename">examples/python/*</tt> and
+    <tt class="filename">examples/java/*</tt>.</p>
+<p>In these examples, we run omniEvents from the command line. A real
+    installation would probably use a system service, as mentioned in the
+    <a href="ar01s02.html" title="2. Build and Installation">installation</a> section.</p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2457818"></a>4.1. Start the Naming Service (omniNames)</h3></div></div>
+<div></div>
+</div>
+<p>You must start the naming service (<span><b class="command">omniNames</b></span>) as
+      the examples make use of the naming service to locate the event channel
+      factory. Please refer to the omniORB documentation for information on how
+      to set up the naming service.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2457838"></a>4.2. Start the omniEvents daemon
+      (<a href="re01.html" title="omniEvents">omniEvents</a>)</h3></div></div>
+<div></div>
+</div>
+<p><span><b class="command">omniEvents</b></span> implements an Event Channel Factory
+      server which clients can use to create Event Channels. The factory
+      registers itself with the Naming Service to enable clients to locate
+      it.</p>
+<p>Before you start, you may need to set the environment variable
+      <tt class="literal">OMNIORB_CONFIG</tt> to contain the full path name of the
+      file <tt class="filename">omniORB.cfg</tt>. The default is
+      <tt class="filename">/etc/omniORB.cfg</tt>. For example:</p>
+<pre class="programlisting">% OMNIORB_CONFIG=/wib/wob/omniORB.cfg; export OMNIORB_CONFIG</pre>
+<p>Start omniEvents by running the executable. The binary is in
+      <tt class="filename">PREFIX/sbin</tt> (if you used the <span><b class="command">configure
+      --prefix</b></span> parameter), or in
+      <tt class="filename">/usr/local/sbin</tt> (by default). Once the service is
+      correctly started up, it automatically backgrounds itself (Unix
+      only).</p>
+<div class="example">
+<a name="id2457918"></a><p class="title"><b>Example 2. Startup from the command-line.</b></p>
+<pre class="programlisting">% omniEvents -l $HOME
+%</pre>
+</div>
+<p>omniEvents supports the following options:</p>
+<pre class="literallayout">  cold start syntax: src/omniEvents [-pPORT] [-aENDPOINT] [OPTIONS]
+  warm start syntax: src/omniEvents [OPTIONS]
+
+  COLD START OPTIONS:
+   -p PORT      configure server port [11169]
+   -a ENDPOINT  set alternate endPoint for failover
+
+  OPTIONS:
+   -l PATH      full path to data directory* [/var/lib/omniEvents]
+   -P PIDFILE   keep track of running instance in PIDFILE.
+   -N ID        factory naming service id   ["EventChannelFactory"]
+   -f           Stay in the foreground.
+   -t FILE      Send trace messages to FILE instead of syslog.
+   -v           print the IOR of the new EventChannelFactory.
+   -V           display version
+   -h           display this help text
+
+  *You can also set the environment variable OMNIEVENTS_LOGDIR
+  to specify the directory where the data files are kept.</pre>
+<p>The options provided allow you to override the default name used
+      to register the Event Channel Factory with the Naming Service.</p>
+<p>omniEvents supports persistent channels by writing all state
+      changes to a file. This persistency datafile is stored in
+      <tt class="filename">/var/lib/omniEvents/</tt> by default. Use the
+      <tt class="option">-l</tt> option or the <tt class="literal">OMNIEVENTS_LOGDIR</tt>
+      environment variable to override the default.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2457986"></a>4.3. Create an Event Channel
+      (<a href="re03.html" title="eventc">eventc</a>)</h3></div></div>
+<div></div>
+</div>
+<p><span><b class="command">eventc</b></span> resolves the factory name with the
+      Naming Service and then contacts the factory to request an Event
+      Channel. The Event Channel is created within the the omniEvents
+      process.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Note</h3>
+<p>You can by-pass the factory completely and instantiate the event
+        channel directly within your own process by linking your application
+        directly with the omniEvents shared libraries. The
+        <tt class="filename">src/main.cc</tt> file is a good starting point to
+        find out how.</p>
+</div>
+<p>eventc then registers the created Event Channel with the Naming
+      Service, and exits.</p>
+<p>eventc has the following options:</p>
+<pre class="literallayout">  syntax: tools/eventc OPTIONS [FACTORY_URI]
+
+  FACTORY_URI: The factory may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+   For example: corbaloc::localhost:11169/omniEvents
+
+  OPTIONS:                                         DEFAULT:
+   -n channel name                                  ["EventChannel"]
+   -N factory name (if URI is not specified)        ["EventChannelFactory"]
+   -c override default CyclePeriod_ns of new channel (nanoseconds)
+   -i set the InsName of new channel, to enable access via corbaloc
+   -p override default MaxNumProxies of new channel
+   -q override default MaxQueueLength of new channel
+   -R override default PullRetryPeriod_ms for new channel (milliseconds)
+   -t set an event type filter, FilterId=&lt;RepositoryId&gt;
+   -v print the IOR of the new EventChannel to standard output.
+   -h display this help text
+  OLD OPTIONS: (only used by omniEvents v2.4 and earlier)
+   -m override default MaxEventsPerConsumer for new channel</pre>
+<p>The options provided allow you to override the default name used
+      to register the Event Channel Factory and the created Event Channel with
+      the Naming Service.</p>
+<p>eventc starts silently unless it encounters any problems or if you
+      turn tracing on by supplying the omniORB specific option
+      <tt class="option">-ORBtraceLevel 20</tt>. eventc terminates once the event
+      channel has been created:</p>
+<pre class="programlisting">% eventc
+%</pre>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2458093"></a>4.4. Run one or more example suppliers/consumers</h3></div></div>
+<div></div>
+</div>
+<p>There are four example clients: <span><b class="command">pushsupp</b></span>,
+      <span><b class="command">pushcons</b></span>, <span><b class="command">pullsupp</b></span> and
+      <span><b class="command">pullcons</b></span>. When run, each supplier and consumer
+      contacts the Naming Service to obtain a reference to the Event Channel
+      created in step 2 above. They then connect themselves to the channel and
+      do their bits. The data sent through the channel is always of type
+      <tt class="literal">long</tt> in the examples.</p>
+<p>As per <span><b class="command">eventc</b></span>, you can override the default
+      name used to register the channel in the naming service. The
+      <tt class="option">-d</tt> option is used to exercise the disconnect
+      functionality provided by the channel.</p>
+<pre class="literallayout">  syntax: examples/pushsupp OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -d NUM   disconnect after sending NUM events     [0 - never disconnect]
+   -r       connect using a nil reference
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text
+
+  syntax: examples/pushcons OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -d NUM   disconnect after receiving NUM events   [0 - never disconnect]
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text
+
+  syntax: examples/pullsupp OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -d NUM   disconnect after sending NUM events     [0 - never disconnect]
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text
+
+  syntax: examples/pullcons OPTIONS [CHANNEL_URI]
+  CHANNEL_URI: The event channel may be specified as a URI.
+   This may be an IOR, or a corbaloc::: or corbaname::: URI.
+  OPTIONS:                                         DEFAULT:
+   -t       enable try_pull mode
+   -r       connect using a nil reference
+   -d NUM   disconnect after receiving NUM events   [0 - never disconnect]
+   -s SECS  sleep SECS seconds after disconnecting  [0]
+   -n NAME  channel name (if URI is not specified)  ["EventChannel"]
+   -h       display this help text</pre>
+<p>The <tt class="option">-t</tt> option in pullcons causes the pull
+      consumer to issue non-blocking <tt class="literal">try_pull()</tt> invocations
+      rather than blocking <tt class="literal">pull()</tt>s.</p>
+<div class="example">
+<a name="id2458214"></a><p class="title"><b>Example 3. Here is what to expect during a typical session</b></p>
+<pre class="programlisting">  % examples/pushsupp
+  Looking for EventChannel
+  Obtained SupplierAdmin.
+  Obtained ProxyPushConsumer.
+  Connected Push Supplier.
+  Push Supplier: push() called. Data : 0
+  Push Supplier: push() called. Data : 1
+  Push Supplier: push() called. Data : 2
+  Push Supplier: push() called. Data : 3
+  Push Supplier: push() called. Data : 4
+  Push Supplier: push() called. Data : 5
+  ...
+
+  % examples/pushcons
+  Obtained ConsumerAdmin.
+  Obtained ProxyPushSupplier.
+  Connected Push Consumer.
+  Push Consumer: push() called. Data : 0
+  Push Consumer: push() called. Data : 1
+  Push Consumer: push() called. Data : 2
+  Push Consumer: push() called. Data : 3
+  Push Consumer: push() called. Data : 4
+  Push Consumer: push() called. Data : 5
+  Push Consumer: push() called. Data : 6
+  ...</pre>
+</div>
+<p>Pull consumers cause the event channel to poll every pull supplier
+      connected when they request an event (using <tt class="literal">pull()</tt>,
+      not <tt class="literal">try_pull()</tt>) until an event enters the event
+      channel (which could come from a push supplier).</p>
+<p>In order to prevent the Event Channel from consuming excessive
+      <span class="acronym">CPU</span> when polling for events the <tt class="option">-r</tt>
+      option of eventc can be used to specify a pull retry period
+      <span class="acronym">QOS</span> parameter. This parameter represents a timeout in
+      seconds to wait for before each poll cycle. This parameter defaults to 1
+      second.</p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="ar01s03.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">3. How to Set Configuration Options </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> 5. Writing an Event Service Client</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

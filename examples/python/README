@@ -1,0 +1,10 @@
+This directory contains Python versions of the example programs.
+
+Run them using the python interpreter, and then follow with command line
+options. The -h option always prints help-text.
+
+  python eventc.py -h
+  python pushsupp.py -h
+  python pushcons.py -h
+  python pullsupp.py -h
+  python pullcons.py -h

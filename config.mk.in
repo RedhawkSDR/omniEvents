@@ -1,0 +1,187 @@
+#                            Package   : omniEvents
+# config.mk.in               Created   : 2003/10/31
+#                            Author    : Alex Tingle
+#
+#    Copyright (C) 2003, 2004 Alex Tingle.
+#
+#    This file is part of the omniEvents application.
+#
+#    omniEvents is free software; you can redistribute it and/or
+#    modify it under the terms of the GNU Lesser General Public
+#    License as published by the Free Software Foundation; either
+#    version 2.1 of the License, or (at your option) any later version.
+#
+#    omniEvents is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public
+#    License along with this library; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+# @configure_input@
+
+OMNIEVENTS_BASE = @abs_top_srcdir@
+
+CORBA_ORB = @CORBA_ORB@
+
+# Punctuation
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+
+# Platform dependent file extensions.
+OBJEXT            := @OBJEXT@
+EXEEXT            := @EXEEXT@
+SOEXT             := @SOEXT@
+StaticLib          = lib$(1).a
+
+# Name of the application and libraries that we will build.
+OMNIEVENTS        := omniEvents
+CLIENT_LIB        := $(call StaticLib,$(OMNIEVENTS)Cl)
+PACKAGE_VERSION   := @PACKAGE_VERSION@
+HAVE_GETHOSTNAME  := @HAVE_GETHOSTNAME@ # May need to install a substitute.
+
+# Define installation directories.
+prefix            := @prefix@
+exec_prefix       := @exec_prefix@
+
+INSTALL_BIN       := $(DESTDIR)@bindir@
+INSTALL_SBIN      := $(DESTDIR)@sbindir@
+INSTALL_LIB       := $(DESTDIR)@libdir@
+INSTALL_INCLUDE   := $(DESTDIR)@includedir@
+INSTALL_IDL       := $(DESTDIR)${prefix}/share/idl
+INSTALL_ETC       := $(DESTDIR)@INSTALL_ETC@
+SYSCONFIG_DIR     := $(DESTDIR)@SYSCONFIG_DIR@
+
+# Set up install & clean programs.
+INSTALL := $(subst auto/install,$(OMNIEVENTS_BASE)/auto/install,@INSTALL@)
+RM      := rm -f
+RMDIR   := rm -rf
+
+
+##
+## IDL compiler.
+##
+
+IDL         := @IDL@
+IDL_COS_DIR := @IDL_COS_DIR@
+IDLFLAGS     = -bcxx  # <--- backend selection should be omniidl's first option.
+IDLFLAGS    += -Wba -Wbh='.hh' -Wbs='.cc' -Wbd='DynSK.cc' -WbBOA -Wbuse_quotes
+IDLFLAGS    += -I$(IDL_COS_DIR)/COS
+
+# The IDL compiler doesn't write code that uses config.h, so we have to compile
+# the generated files with a couple of extra options:
+EXTRA_IDL_CXXFLAGS := @IDL_CPPFLAGS@ -D@PLATFORM_DEFINITION@ \
+  -D@PROCESSOR_DEFINITION@ -D__OSVERSION__=@OSVERSION@
+
+
+##
+## C++ compiler:  $(CXX) $(CPPFLAGS) $(CXXFLAGS) source
+##
+
+CXX      := @CXX@
+CXXFLAGS += @CXXFLAGS@ # CXXFLAGS
+
+CPPFLAGS += -I../idl -I../src
+CPPFLAGS += @CPPFLAGS@ # CPPFLAGS
+CPPFLAGS += @DEFS@ # DEFS
+CPPFLAGS += -DENABLE_CLIENT_IR_SUPPORT=1 -DOMNIEVENTS_REAL_TIME_PUSH=1
+
+##
+## C++ Linker:  $(LD) objects $(LDFLAGS) $(LDOUT)target $(LDLIBS)
+##
+
+LD       := $(CXX)
+LDFLAGS  += @CXXFLAGS@ # CXXFLAGS
+LDFLAGS  += @LDFLAGS@ # LDFLAGS
+LDLIBS   += @LIBS@ # LIBS
+
+##
+## Command to make a symbolic link from $(1) to $(2)
+##
+
+MakeSymLink = $(RM) $(2) && ln -s $(1) $(2)
+
+##
+## Command to build C++ static archive (library)
+## $(1) - archive/library (output) filename
+## $(2) - objects and static libraries to include
+##
+
+CxxBuildStatic = @CXX_AR@ $(1) $(2)
+
+##
+## Command to build C++ executable.
+## $(1) - executable (output) filename
+## $(2) - objects and static libraries to include
+##
+
+CxxBuildExecutable = $(LD) $(2) $(LDFLAGS) -o $(1) $(LDLIBS)
+
+##
+## Command to build C++ shared libraries.
+## $(1) - output filename (.so)
+## $(2) - objects
+## $(3) - static libraries to include
+## $(4) - soname
+##
+
+CXX_LINK_SO_LIB := @CXX_LINK_SO_LIB@
+ifeq ($(CXX_LINK_SO_LIB),)
+  CxxBuildShared = 
+else
+  CxxBuildShared = \
+    soname=$(4) && \
+    $(CXX_LINK_SO_LIB) $(1) $(2) $(LDFLAGS) $(LDLIBS) $(3)
+endif
+
+##
+## Command to install C++ shared libraries.
+## $(1) - root library name
+## $(2) - package version (MAJOR.MINOR.MICRO)
+## $(3) - target directory
+##
+
+SharedLibName     = lib$(1)$(SOEXT)
+SharedLibFullName = $(SharedLibName).$(2)
+SharedLibSoName   = $(basename $(basename $(SharedLibFullName)))
+
+ifeq ($(CXX_LINK_SO_LIB),)
+  InstallSharedLib = 
+else
+  InstallSharedLib = \
+    $(INSTALL) -d $(3) && \
+    $(INSTALL) $(SharedLibName) $(3)/$(SharedLibFullName) && \
+    cd $(3) && \
+    $(call MakeSymLink,$(SharedLibFullName),$(basename $(SharedLibFullName))) &&\
+    $(call MakeSymLink,$(basename $(SharedLibFullName)),$(SharedLibSoName)) &&\
+    $(call MakeSymLink,$(SharedLibSoName),$(SharedLibName))
+endif
+
+##
+## Some compilers & linkers need to be told where to store
+## template instantiations.
+##
+
+CXXFLAGS_PTR := @CXXFLAGS_PTR@
+CXX_REPOSITORY := $(OMNIEVENTS_BASE)/templates.d
+ifneq ("$(CXXFLAGS_PTR)","")
+  CXXFLAGS += @CXXFLAGS_PTR@$(CXX_REPOSITORY)
+  LDFLAGS  += @CXXFLAGS_PTR@$(CXX_REPOSITORY)
+endif
+
+##
+## Suffix rules for compiling .idl & .cc files.
+##
+
+.SUFFIXES: .idl .cc .$(OBJEXT)
+
+.idl.cc:
+	$(IDL) $(IDLFLAGS) $<
+
+.cc.$(OBJEXT):
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
+
+# (end)

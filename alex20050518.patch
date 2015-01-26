@@ -1,0 +1,175 @@
+? alex20050518.patch
+? connection.patch
+? foo
+? src/.nfs0009f0fa0000007c
+Index: src/EventChannel.cc
+===================================================================
+RCS file: /cvsroot/omnievents/omniEvents/src/EventChannel.cc,v
+retrieving revision 1.15.2.7
+diff -u -r1.15.2.7 EventChannel.cc
+--- src/EventChannel.cc	13 May 2005 11:35:21 -0000	1.15.2.7
++++ src/EventChannel.cc	18 May 2005 10:15:08 -0000
+@@ -56,13 +56,13 @@
+   // Prevent further incoming connections.
+   _shutdownRequested=true;
+ 
++  DB(5,"EventChannel_i::destroy()")
++
+   // Send disconnect messages to connected clients.
+   if(_consumerAdmin)
+      _consumerAdmin->disconnect();
+   if(_supplierAdmin)
+      _supplierAdmin->disconnect();
+-
+-  DB(5,"EventChannel_i::destroy()")
+ }
+ 
+ 
+Index: src/ProxyPullConsumer.cc
+===================================================================
+RCS file: /cvsroot/omnievents/omniEvents/src/ProxyPullConsumer.cc,v
+retrieving revision 1.11.2.4
+diff -u -r1.11.2.4 ProxyPullConsumer.cc
+--- src/ProxyPullConsumer.cc	10 May 2005 14:28:06 -0000	1.11.2.4
++++ src/ProxyPullConsumer.cc	18 May 2005 10:15:08 -0000
+@@ -97,7 +97,10 @@
+   {
+     Proxy* p =*i; // Sun's CC requires this temporary.
+     ProxyPullConsumer_i* ppc =static_cast<ProxyPullConsumer_i*>(p);
+-    ppc->disconnect_pull_consumer();
++    // We are in the EventChannel's thread.
++    // Make sure all calls go though the ProxyPullConsumer POA.
++    CosEventChannelAdmin::ProxyPullConsumer_var ppcv =ppc->_this(); 
++    ppcv->disconnect_pull_consumer();
+   }
+ }
+ 
+@@ -140,9 +143,9 @@
+   else
+   {
+     CORBA::Request_var req=_target->_request("disconnect_pull_supplier");
++    _target=CosEventComm::PullSupplier::_nil();
+     req->send_deferred();
+     Orb::inst().deferredRequest(req._retn());
+-    _target=CosEventComm::PullSupplier::_nil();
+   }
+ }
+ 
+Index: src/ProxyPullSupplier.cc
+===================================================================
+RCS file: /cvsroot/omnievents/omniEvents/src/ProxyPullSupplier.cc,v
+retrieving revision 1.5.2.3
+diff -u -r1.5.2.3 ProxyPullSupplier.cc
+--- src/ProxyPullSupplier.cc	10 May 2005 14:28:07 -0000	1.5.2.3
++++ src/ProxyPullSupplier.cc	18 May 2005 10:15:08 -0000
+@@ -91,8 +91,12 @@
+ {
+   for(set<Proxy*>::iterator i =_servants.begin(); i!=_servants.end(); ++i)
+   {
+-    ProxyPullSupplier_i* narrowed =dynamic_cast<ProxyPullSupplier_i*>(*i);
+-    narrowed->disconnect_pull_supplier();
++    ProxyPullSupplier_i* pps =dynamic_cast<ProxyPullSupplier_i*>(*i);
++    // We are in the EventChannel's thread.
++    // Make sure all calls go though the ProxyPullSupplier POA.
++    CosEventChannelAdmin::ProxyPullSupplier_var ppsv =pps->_this(); 
++    ppsv->disconnect_pull_supplier();
++
+   }
+ }
+ 
+@@ -137,10 +141,10 @@
+   else if(!CORBA::is_nil(_target))
+   {
+     CORBA::Request_var req=_target->_request("disconnect_pull_consumer");
++    _target=CosEventComm::PullConsumer::_nil();
+     req->send_deferred();
+     Orb::inst().deferredRequest(req._retn());
+   }
+-  _target=CosEventComm::PullConsumer::_nil();
+ }
+ 
+ CORBA::Any* ProxyPullSupplier_i::pull()
+Index: src/ProxyPushSupplier.cc
+===================================================================
+RCS file: /cvsroot/omnievents/omniEvents/src/ProxyPushSupplier.cc,v
+retrieving revision 1.17.2.5
+diff -u -r1.17.2.5 ProxyPushSupplier.cc
+--- src/ProxyPushSupplier.cc	10 May 2005 11:33:44 -0000	1.17.2.5
++++ src/ProxyPushSupplier.cc	18 May 2005 10:15:09 -0000
+@@ -122,7 +122,10 @@
+   {
+     Proxy* p =*i; // Sun's CC requires this temporary.
+     ProxyPushSupplier_i* pps =static_cast<ProxyPushSupplier_i*>(p);
+-    pps->disconnect_push_supplier();
++    // We are in the EventChannel's thread.
++    // Make sure all calls go though the ProxyPushSupplier POA.
++    CosEventChannelAdmin::ProxyPushSupplier_var ppsv =pps->_this(); 
++    ppsv->disconnect_push_supplier();
+   }
+ }
+ 
+@@ -284,9 +287,9 @@
+   else
+   {
+     CORBA::Request_var req=_target->_request("disconnect_push_consumer");
++    _target=CosEventComm::PushConsumer::_nil();
+     req->send_deferred();
+     Orb::inst().deferredRequest(req._retn());
+-    _target=CosEventComm::PushConsumer::_nil();
+   }
+ }
+ 
+Index: src/Servant.cc
+===================================================================
+RCS file: /cvsroot/omnievents/omniEvents/src/Servant.cc,v
+retrieving revision 1.8.2.3
+diff -u -r1.8.2.3 Servant.cc
+--- src/Servant.cc	12 May 2005 07:58:30 -0000	1.8.2.3
++++ src/Servant.cc	18 May 2005 10:15:09 -0000
+@@ -89,7 +89,10 @@
+ 
+ 
+ #if OMNIEVENTS__DEBUG_SERVANT
++#  define OMNIEVENTS__ADDR "["<<long(this)<<"] "
+ int Servant::_objectCount =0;
++#else
++#  define OMNIEVENTS__ADDR
+ #endif
+ 
+ 
+@@ -98,7 +101,7 @@
+ {
+ #if OMNIEVENTS__DEBUG_SERVANT
+   ++_objectCount;
+-  DB(21,"Servant::Servant() count="<<_objectCount)
++  DB(21,OMNIEVENTS__ADDR "Servant::Servant() count="<<_objectCount)
+ #endif
+ }
+ 
+@@ -107,7 +110,7 @@
+ {
+ #if OMNIEVENTS__DEBUG_SERVANT
+   --_objectCount;
+-  DB(20,"Servant::~Servant() count="<<_objectCount)
++  DB(20,OMNIEVENTS__ADDR "Servant::~Servant() count="<<_objectCount)
+ #endif
+ }
+ 
+@@ -122,7 +125,7 @@
+ {
+   using namespace PortableServer;
+   CORBA::String_var poaName =_poa->the_name();
+-  DB(5,"Activating object "<<poaName.in()<<"/"<<oidStr);
++  DB(5,OMNIEVENTS__ADDR "Activating object "<<poaName.in()<<"/"<<oidStr);
+   try
+   {
+     ObjectId_var oid =string_to_ObjectId(oidStr);
+@@ -190,7 +193,7 @@
+ 
+   try
+   {
+-    DB(7,"Deactivating object "<<poaName<<"/"<<oidStr.in());
++    DB(7,OMNIEVENTS__ADDR "Deactivating object "<<poaName<<"/"<<oidStr.in());
+     _poa->deactivate_object(oid.in());
+   }
+   catch(POA::ObjectNotActive& ex)

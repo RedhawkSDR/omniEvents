@@ -1,0 +1,57 @@
+ o ProxyPullConsumer changed to deal better with large values of
+   PullRetryPeriod_ms. It now collects incoming events every cycle
+   (CyclePeriod_ns). PullRetryPeriod_ms only delays new outgoing calls to
+   pull() or try_pull().
+   (Thanks to Dirk O. Siebnich)
+
+ o Fixed bug in str2name() naming.cc, that causes a SEGV on HP-UX.
+   (Thanks to Andrew Wong.)
+
+ o Upgraded to Autoconf 2.59
+
+ o Now call Policy::destroy() on policy objects once POA::create_POA() has
+   been called. Doesn't change anything on omniORB (which clears away policy
+   objects anyway), but is more portable.
+
+ o New example showing use of libomniEvents: channel.cc
+
+ o Programs now destroy their ORB before exiting.
+   (Thanks to James Le Cuirot)
+
+ o The omniEventsLog singleton class is now optional. Persistency logging is
+   only performed if the log object is not NULL. This makes it much easier to
+   include event channels in standalone applications.
+   (Thanks to James Le Cuirot)
+   
+ o Eliminated overly clever use of temporary that disturbs the SGI compiler.
+   (Thanks to `caoy'.)
+
+ o Improved locking at shut down. All CORBA::Request objects are now correctly
+   released before shut down.
+
+ o Added check for C++ RTTI option. Needed on AIX's xlC_r compiler.
+   (Thanks to `caoy' for reporting the problem.)
+
+ o Fixed a number of memory leaks:
+   - caused by using _this() directly.
+     This changes the semantics of the class Mapper constructor - it no longer
+     assumes ownership of the reference that is passed to it.
+   - EventChannelFactory objects are now reference counted.
+   - various reference counting bugs fixed.
+  (Thanks to Dirk O. Siebnich for alerting me to this problem, and providing
+   a patch for the worst examples.)
+
+ o The EventChannel & ProxyPushSupplierManager threads are now cleared away
+   properly on shutdown. There is no longer any need to call
+   EventChannel::start().
+
+ o Changed callbacks to use reference counting rather than magic numbers.
+   Eliminates a race condition.
+
+ o Added extra debug flags. Define these macros and run with traceLevel 21 to
+   activate:
+    -DOMNIEVENTS__DEBUG_REF_COUNTS=1  trace calls to _add/remove_ref()
+    -DOMNIEVENTS__DEBUG_SERVANT=1     trace Servant objects
+    -DOMNIEVENTS__DEBUG_ALL=1         both
+
+ o Automated tests - `make -f meta.mk test`.

@@ -1,0 +1,50 @@
+// This IDL is takes from Chapter 25 of the CORBA specification (01-12-35.pdf).
+// It is cut down to contain only the definitions required by omniEvents.
+
+#ifndef _FT_PARTIAL_IDL_
+#define _FT_PARTIAL_IDL_
+
+#pragma prefix "omg.org"
+
+module FT {
+
+    // Specifications for Fault Management
+    // Specification of PullMonitorable Interface
+    // which Application Objects Inherit
+    interface PullMonitorable {
+        boolean is_alive();
+    };
+
+    // Specification of FaultNotifier Interface
+    //interface FaultNotifier { ... };
+
+    // Specifications for Logging and Recovery
+    typedef sequence<octet> State;
+
+    exception NoStateAvailable {};
+    exception InvalidState {};
+    exception NoUpdateAvailable {};
+    exception InvalidUpdate {};
+
+    // Specification of Checkpointable Interface
+    // which Updateable and Application Objects Inherit
+    interface Checkpointable {
+        State get_state()
+            raises(NoStateAvailable);
+
+        void set_state(in State s)
+            raises(InvalidState);
+    };
+
+    // Specification of Updateable Interface
+    // which Application Objects Inherit
+    interface Updateable : Checkpointable {
+        State get_update()
+            raises(NoUpdateAvailable);
+
+        void set_update(in State s)
+            raises(InvalidUpdate);
+    };
+
+};
+#endif // for #ifndef _FT_PARTIAL_IDL_

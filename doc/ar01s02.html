@@ -1,0 +1,535 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>2. Build and Installation</title>
+<link rel="stylesheet" href="omnievents.docbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<link rel="home" href="index.html" title="omniEvents">
+<link rel="up" href="index.html" title="omniEvents">
+<link rel="previous" href="ar01s01.html" title="1. Introduction">
+<link rel="next" href="ar01s03.html" title="3. How to Set Configuration Options">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">2. Build and Installation</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="ar01s01.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a>
+</td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title" style="clear: both">
+<a name="installation"></a>2. Build and Installation</h2></div></div>
+<div></div>
+</div>
+<div class="toc"><dl>
+<dt><span class="section"><a href="ar01s02.html#id2449079">2.1. Prerequisites</a></span></dt>
+<dt><span class="section"><a href="ar01s02.html#quick_install_unix">2.2. Quick Install Guide - Unix</a></span></dt>
+<dt><span class="section"><a href="ar01s02.html#quick_install_windows">2.3. Quick Install Guide - Windows</a></span></dt>
+<dt><span class="section"><a href="ar01s02.html#id2449494">2.4. Building from Source on Windows</a></span></dt>
+<dt><span class="section"><a href="ar01s02.html#id2449742">2.5. Programs</a></span></dt>
+<dt><span class="section"><a href="ar01s02.html#id2456944">2.6. Supported Platforms</a></span></dt>
+<dt><span class="section"><a href="ar01s02.html#id2457205">2.7. Directory Structure</a></span></dt>
+</dl></div>
+<p>This section provides a complete guide to building and installing
+    omniEvents.</p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2449079"></a>2.1. Prerequisites</h3></div></div>
+<div></div>
+</div>
+<p>You need to install omniORB before you can start with omniEvents.
+      The latest version of omniORB4 is strongly recommended. You can download
+      it from here: <a href="http://omniorb.sourceforge.net/download.html" target="_top">http://omniorb.sourceforge.net/download.html</a></p>
+<p>The Unix install requires <a href="http://www.gnu.org/software/make/" target="_top">GNU Make</a>. If you don't
+      have it already, then you can download it from here: <a href="http://ftp.gnu.org/pub/gnu/make/" target="_top">http://ftp.gnu.org/pub/gnu/make/</a></p>
+<p>In order to install omniEvents as a Windows service, you need to
+      be using a modern version of Windows. You need: NT, win2000 or XP. You
+      cannot use: win95, 98 or ME (but you can just run the server
+      manually).</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="quick_install_unix"></a>2.2. Quick Install Guide - Unix</h3></div></div>
+<div></div>
+</div>
+<p>omniEvents is distributed as source for Unix platforms. To install
+      you must unpack the <tt class="filename">omniEvents-XXX-src.tar.gz</tt> file,
+      build the code and then install the executables and init scripts into
+      the correct locations on your system.</p>
+<div class="orderedlist"><ol type="1">
+<li><p>Unpack the .tar.gz file: <span><b class="command">gzip -dc
+          omniEvents-XXX-src.tar.gz | tar xvf -</b></span>.</p></li>
+<li><p>Go down into the omniEvents diectory: <span><b class="command">cd
+          omniEvents-XXX</b></span>.</p></li>
+<li>
+<p>Run the <span><b class="command">configure</b></span> script. For a full list
+          of available parameters, type <span><b class="command">./configure --help</b></span>.
+          Common parameters are:</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><tt class="option">--prefix=PREFIX</tt></td>
+<td>install files in PREFIX
+                  [<tt class="filename">/usr/local</tt>].</td>
+</tr>
+<tr>
+<td><tt class="option">--with-omniorb=PATH</tt></td>
+<td>set the path to the local omniORB installation
+                  [$OMNIORBBASE].</td>
+</tr>
+<tr>
+<td><tt class="option">-q, --quiet, --silent</tt></td>
+<td>do not print &#8220;<span class="quote">checking...</span>&#8221;
+                  messages.</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li><p>Compile the executables: <span><b class="command">make</b></span>.</p></li>
+<li><p>Get superuser privileges: <span><b class="command">su root</b></span>.</p></li>
+<li><p>Install the executables: <span><b class="command">make
+          install</b></span>.</p></li>
+<li><p>Install the system init script: <span><b class="command">cd etc; make
+          install</b></span>.</p></li>
+<li><p>Set up SysV service
+          <tt class="literal">omniorb-eventservice</tt>...</p></li>
+</ol></div>
+<p>The procedure for setting up a SysV service differs from platform
+      to platform. You need to create symbolic links from the
+      <tt class="filename">/etc/rcX.d</tt> directories to the
+      <tt class="filename">/etc/init.d/omniorb-eventservice</tt> init script. (The
+      paths to these files may be different on your system.) For example, on a
+      <a href="http://www.debian.org/" target="_top">Debian</a> GNU/Linux system, the
+      command <span><b class="command">update-rc.d omniorb-eventservice defaults</b></span>
+      would set up omniEvents to start at the default runlevels.</p>
+<div class="example">
+<a name="id2449359"></a><p class="title"><b>Example 1. Typical Unix build session</b></p>
+<pre class="programlisting">% gzip -dc omniEvents-XXX-src.tar.gz | tar xvf -
+% cd omniEvents-XXX
+% ./configure
+% make
+% su root
+# make install
+# cd etc
+# make install
+#</pre>
+</div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="quick_install_windows"></a>2.3. Quick Install Guide - Windows</h3></div></div>
+<div></div>
+</div>
+<p>omniEvents is distributed precompiled for Windows. To install you
+      must unpack the omniEvents-XXX-win32.zip file, set up your system path
+      and install the service.</p>
+<div class="orderedlist"><ol type="1">
+<li>
+<p>Unpack the <tt class="filename">.zip</tt> file using (for example)
+          WinZip.</p>
+<p>We assume that you unpack it into <tt class="filename">C:\Program
+          Files</tt>. If you choose to put it somewhere else, then just
+          adjust the remainder of these instructions accordingly.</p>
+</li>
+<li>
+<p>Add the omniEvents directory to the system environment
+          variable: Path. It's important to NOT use the &#8220;<span class="quote">local</span>&#8221;
+          path. Only the &#8220;<span class="quote">system</span>&#8221; path is available at boot time
+          when services start.</p>
+<p>Menu: Start -&gt; Control Panel. Icon: System. Tab: Advanced.
+          Click: Environment Variables.</p>
+<p>Add to System Path: <tt class="literal">;C:\Program
+          Files\omniEvents-XXX</tt></p>
+</li>
+<li><p>Create a data directory: <tt class="filename">C:\omniEvents</tt>.
+          omniEvents will store its persistent state in this directory.</p></li>
+<li><p>Install the service: Open a command window, and type:
+          <span><b class="command">omniEvents install
+          -t "C:\omniEvents\trace.out"</b></span></p></li>
+<li><p>The service will start automatically when you next reboot, or
+          you can start it manually now.</p></li>
+</ol></div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2449494"></a>2.4. Building from Source on Windows</h3></div></div>
+<div></div>
+</div>
+<p>It is not usually necessary to compile omniEvents for Windows, since
+      it is available pre-compiled.</p>
+<div class="orderedlist"><ol type="1">
+<li>
+<p>Firstly make sure you have everything you need:</p>
+<p>Microsoft Visual C++ compiler. (Tested with version 6.0,
+          service pack 3) The environment variables for command-line compiling
+          must be set up. You can test this by trying to compile
+          <tt class="filename">hello.cc</tt> (in the <tt class="filename">win32</tt>
+          directory) with the command:</p>
+<pre class="programlisting">&gt; cl -TP -GX -MD hello.cc</pre>
+<p>omniORB4. Get it from <a href="http://omniorb.sourceforge.net/download.html" target="_top">http://omniorb.sourceforge.net/download.html</a>
+          You should set up your PATH environment to include:
+          <tt class="filename">&lt;omniORB Top-Level
+          Directory&gt;\bin\x86_win32</tt> Test this by checking that
+          this command prints out the omniidl help:</p>
+<pre class="programlisting">&gt; omniidl -u</pre>
+<p>A fairly recent version of GNU Make for Windows (3.78.1 or
+          above). Download it from <a href="http://unxutils.sourceforge.net/" target="_top">http://unxutils.sourceforge.net/</a>
+          or Google for &#8220;<span class="quote">gnu make windows</span>&#8221;. The
+          <tt class="filename">make.exe</tt> also needs to be in the PATH. For
+          example, you could copy it into your <tt class="filename">C:\winnt</tt>
+          directory. The following command should show version text:</p>
+<pre class="programlisting">&gt; make --help</pre>
+</li>
+<li>
+<p>Next make sure that the build files are correctly
+          configured. Don't run the <span><b class="command">configure</b></span> command on
+          Windows, hand edit the files instead.</p>
+<p>When you unpack the <tt class="filename">omniEvents-XXX-src.tar.gz</tt>
+          file, the Windows <tt class="filename">config.mk</tt> and
+          <tt class="filename">src/config.h</tt> files should already be in the
+          correct places. If not, then you can copy them from the
+          <tt class="filename">win32/</tt> directory.</p>
+<p>Edit <tt class="filename">config.mk</tt> to set the values of
+          these variables:</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><tt class="literal">OMNIORB_BASE</tt></td>
+<td>full path to omniORB top-level directory.</td>
+</tr>
+<tr>
+<td><tt class="literal">OMNIORB_LIBS</tt></td>
+<td>libraries provided by omniORB.</td>
+</tr>
+<tr>
+<td><tt class="literal">OMNIEVENTS_BASE</tt></td>
+<td>full path to omniEvents top-level directory.</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li>
+<p>Compile omniEvents. Open a command window, and
+          <span><b class="command">cd</b></span> to the omniEvents top-level directory. The
+          following command builds omniEvents:</p>
+<pre class="programlisting">&gt; make</pre>
+</li>
+</ol></div>
+<p></p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2449742"></a>2.5. Programs</h3></div></div>
+<div></div>
+</div>
+<p>This section lists the programs that are bundled with the
+      omniEvents distribution.</p>
+<p>Most importantly, the omniEvents daemon implements the
+      EventChannelFactory and hosts the event channels. The daemon is built in
+      the <tt class="filename">src/</tt> directory. On Unix the daemon is installed
+      into <tt class="filename">/usr/local/sbin</tt>, by default.</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="center">Unix</th>
+<th align="center">win32</th>
+<th align="center">Description</th>
+</tr></thead>
+<tbody><tr>
+<td><tt class="filename">omniEvents</tt></td>
+<td><tt class="filename">omniEvents.exe</tt></td>
+<td>EventChannelFactory server.</td>
+</tr></tbody>
+</table></div>
+<p>These tools enable management of event channels from the command
+      line. They are built in the <tt class="filename">tools/</tt> directory. On
+      Unix, they are installed into <tt class="filename">/usr/local/bin</tt>, by
+      default.</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="center">Unix</th>
+<th align="center">win32</th>
+<th align="center">Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><tt class="filename">eventc</tt></td>
+<td><tt class="filename">eventc.exe</tt></td>
+<td>Command to create a channel.</td>
+</tr>
+<tr>
+<td><tt class="filename">eventf</tt></td>
+<td><tt class="filename">eventf.exe</tt></td>
+<td>Command to federate (link) two channels.</td>
+</tr>
+<tr>
+<td><tt class="filename">events</tt></td>
+<td><tt class="filename">events.exe</tt></td>
+<td>Command to stream events to or from a file.</td>
+</tr>
+<tr>
+<td><tt class="filename">rmeventc</tt></td>
+<td><tt class="filename">rmeventc.exe</tt></td>
+<td>Command to remove a channel.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Finally, four example clients are provided. These enable you to
+      test whether or not your omniEvents daemon is really working. They are
+      built in the <tt class="filename">examples/</tt> directory.</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="center">Unix</th>
+<th align="center">win32</th>
+<th align="center">Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><tt class="filename">pushsupp</tt></td>
+<td><tt class="filename">pushsupp.exe</tt></td>
+<td>Push Supplier test client</td>
+</tr>
+<tr>
+<td><tt class="filename">pushcons</tt></td>
+<td><tt class="filename">pushcons.exe</tt></td>
+<td>Push Consumer test client</td>
+</tr>
+<tr>
+<td><tt class="filename">pullsupp</tt></td>
+<td><tt class="filename">pullsupp.exe</tt></td>
+<td>Pull Supplier test client</td>
+</tr>
+<tr>
+<td><tt class="filename">pullcons</tt></td>
+<td><tt class="filename">pullcons.exe</tt></td>
+<td>Pull Consumer test client</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2456944"></a>2.6. Supported Platforms</h3></div></div>
+<div></div>
+</div>
+<p>omniEvents 2.6 has been tested with omniORB 3.0.5 &amp; omniORB
+      4.0.4 on the following platforms.</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Platform</th>
+<th>omniORB3</th>
+<th>omniORB4</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>AIX 5.1 / xlC_r 5.0</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>HPUX 11.00 / aCC A.03.37</td>
+<td>-</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Linux x86, Debian 3.1 / g++ 2.95.4</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Macintosh OS X, 10.3.5</td>
+<td>-</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Solaris 9 x86 / gcc-2.95.3</td>
+<td>-</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Solaris 8 sparc / CC 5.3</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Tru64 5.1B / cxx 6.5</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Windows 2000 / Visual C++ 6.0 SP3</td>
+<td>-</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table></div>
+<p>Earlier versions of omniEvents have been tested on the following
+      platforms.</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Platform</th>
+<th>omniORB3</th>
+<th>omniORB4</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Tru64 4.0F / cxx 6.2</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>HPUX 10.20 / aCC (B3910B A.01.21)</td>
+<td>yes</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Windows NT 4.0 / Visual C++ 6.0 SP3</td>
+<td>yes</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Solaris 2.5 / gcc-2.8.1</td>
+<td>yes</td>
+<td>-</td>
+</tr>
+<tr>
+<td>x86 Redhat linux 4.2 / gcc-2.7.2</td>
+<td>yes</td>
+<td>-</td>
+</tr>
+<tr>
+<td>x86 Mandrake 7.2 / gcc-2.95.3</td>
+<td>-</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="id2457205"></a>2.7. Directory Structure</h3></div></div>
+<div></div>
+</div>
+<p>The directory structure of the omniEvents distribution looks as
+      follows.</p>
+<div class="informaltable"><table border="1">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><tt class="filename">auto/</tt></td>
+<td>various scripts used by AutoConf</td>
+</tr>
+<tr>
+<td><tt class="filename">doc/</tt></td>
+<td>this documentation</td>
+</tr>
+<tr>
+<td><tt class="filename">doc/doxygen/</tt></td>
+<td>source code documentation generated by Doxygen.</td>
+</tr>
+<tr>
+<td><tt class="filename">examples/</tt></td>
+<td>source files for examples</td>
+</tr>
+<tr>
+<td><tt class="filename">examples/java/</tt></td>
+<td>Java version of examples</td>
+</tr>
+<tr>
+<td><tt class="filename">examples/python/</tt></td>
+<td>Python version of examples</td>
+</tr>
+<tr>
+<td><tt class="filename">idl/</tt></td>
+<td>idl files</td>
+</tr>
+<tr>
+<td><tt class="filename">src/</tt></td>
+<td>source files</td>
+</tr>
+<tr>
+<td><tt class="filename">test/</tt></td>
+<td>test harness</td>
+</tr>
+<tr>
+<td><tt class="filename">tools/</tt></td>
+<td>command line tools for manipulating the Event
+              Service.</td>
+</tr>
+<tr>
+<td><tt class="filename">win32/</tt></td>
+<td>build files for Windows</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="ar01s01.html">Prev</a> </td>
+<td width="20%" align="center"><a accesskey="u" href="index.html">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">1. Introduction </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> 3. How to Set Configuration Options</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

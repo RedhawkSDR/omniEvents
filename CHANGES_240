@@ -1,0 +1,90 @@
+RELEASE 2.4 (AUTOCONF)
+======================
+
+This is a port of omniEvents 2.1.2 to an autoconf build environment. It
+preserve the exact functionality of 2.1.2, in order to keep changes
+in the build system separate from functional changes. There have been some
+minor changes to the text of error messages, in order to enhace usability.
+
+
+Features:
+
+ o  `make install' installs omniEvents into the proper local directory
+    (/usr/local by default).
+
+ o  Auto detects omniORB3 and omniORB4.
+ 
+ o  Auto detects C++ compiler shared library compile/build options.
+
+ o  Auto detects C++ STL and iostream features.
+ 
+ o  Tested on a variety of platforms:
+
+      Windows 2000 / Visual C++ 6.0 
+      AIX 5.1 / xlC_r 5.0               
+      HPUX 11.00 / aCC A.03.37           
+      Linux x86, Debian 3.1 / g++ 2.95.4
+      Solaris 2.8 / CC 5.3              
+      Tru64 4.0F / cxx 6.2
+
+ o  New Python versions of example programs (in examples/python directory).
+
+ o  Windows binaries now available.
+
+
+Changes:
+
+  Virtually all `#include's have been wrapped in autoconf-generated
+  preprocessor macro guards. These have almost completely replaced platform
+  specific switches.
+
+  Only the file src/omniEventsLog.cc still contains a significant number of
+  platform specific switches. This file has been extensively re-factored,
+  but it still needs work ;-(
+
+  Manual configuration of a few esoteric values has been moved from
+  config/config.mk to include/config.h.
+
+  New output() member functions. Eliminates the need for friend ostream
+  functions that are problematic on earlier versions of Microsoft
+  VisualC++
+  
+  Updated License to GNU Lesser GPL v2.1. Included LICENSE file in
+  distribution.
+  
+  Removed files:
+    config/config.mk
+    README.hpux11       - now builds out of the box on HP-UX11
+    README.win32        - no longer relevant
+    dir.mk              - not used by new build system
+    GNUmakefile         - not used by new build system
+    idl/Naming.idl      - now use COS/CosNaming.idl
+
+  Added files:
+    configure           - main auto configuration script.
+    config.mk.in        - template for config.mk file.
+    include/config.h.in - template for include/config.h file.
+    Makefile            - in each build directory.
+    LICENSE
+    win32/*             - windows build files.
+    examples/python/*   - python port of examples programs.
+
+  Autoconf files (used by configure - just leave them alone):
+    auto/*
+
+
+Autoconf:
+
+  The following file are used by autoconf to generate the configure script.
+    configure.ac
+    aclocal.d/*
+  
+  To regenerate the `configure' script, run the following commands:
+  
+  % aclocal -I aclocal.d  # Reads the contents of `aclocal.d'.
+  % autoheader            # Generates `include/config.h'.
+  % autoconf              # Generates `configure'.
+
+
+-Alex Tingle [3-Dec-2003]
+alex.omnievents(AT)firetree.net
