@@ -76,7 +76,8 @@ EventChannel_i::EventChannel_i(EventChannelStore* store)
   _properties(),
   _mapper(NULL),
   _lock(),
-  _refCount(1)
+  _refCount(1),
+  _name("")
 {}
 
 
@@ -87,7 +88,7 @@ void EventChannel_i::activate(
 {
   // The order of these various initialization methods is very important.
   // I've documented dependencies as 'REQUIRES' comments.
-
+  _name = channelName;
   createPoa(channelName);
 
   if(node)
@@ -292,6 +293,8 @@ void EventChannel_i::output(ostream& os)
 
 void EventChannel_i::setInsName(const string v)
 {
+
+  std::cout << " setInstName  v: " << v << std::endl;
   Mapper* newMapper =NULL;
   try
   {
@@ -319,6 +322,18 @@ void EventChannel_i::setInsName(const string v)
 }
 
 
+  std::string EventChannel_i::name( ) {
+    std::string retval("");
+    if (!CORBA::is_nil(_poa)) {
+        CORBA::String_var poaName =_poa->the_name();
+        retval=poaName.in();
+    }
+    else {
+      retval = _name;
+    }
+    return retval;
+  }
+
 void EventChannel_i::createPoa(const char* channelName)
 {
   using namespace PortableServer;
@@ -345,6 +360,8 @@ void EventChannel_i::createPoa(const char* channelName)
       {
         // Create a new POA (and new POAManager) for this channel.
         // The POAManager will be used for all of this channel's POAs.
+        if ( channelName ) 
+          std::cout << "createPoa name:"  << channelName << std::endl;
         _poa=p->create_POA(channelName,POAManager::_nil(),policies);
         _poaManager=_poa->the_POAManager();
       }
@@ -416,6 +433,74 @@ void EventChannelStore::output(ostream &os)
   }
 }
 
+
+void EventChannelStore::empty()
+{
+  omni_mutex_lock l(_lock);
+  for(set<EventChannel_i*>::iterator i=_channels.begin();
+      i!=_channels.end();
+      ++i)
+  {
+    (*i)->destroy();
+  }
+}
+
+
+
+  bool EventChannelStore::exists( const std::string &cname )
+{
+  bool retval=false;
+  omni_mutex_lock l(_lock);
+  for(set<EventChannel_i*>::iterator i=_channels.begin();
+      i!=_channels.end();
+      ++i)
+  {
+    if ( cname == (*i)->name() ) { retval=true; break;}
+  }
+  DB(5,"EventChannel_i::exists channel:" << cname.c_str() << " exists" << retval );
+  return retval;
+}
+
+
+
+  void EventChannelStore::list( omniEvents::EventChannelInfoList &clist  )
+{
+
+  DB(5,"EventChannel_i::list num channels:" << _channels.size() );     
+  clist.length(_channels.size());
+  int i;
+  omni_mutex_lock l(_lock);
+  set<EventChannel_i*>::iterator iter;
+  for(i=0, iter=_channels.begin();
+      iter!=_channels.end();
+      ++iter, i++)
+  {
+    EventChannel_i *ech=*iter;
+    try { 
+      omniEvents::EventChannelInfo eci;
+      std::string ename = ech->name();
+      DB(5,"EventChannel_i::list i:" << i << " name:" << ename.c_str() );
+      eci.channel_name = ename.c_str();
+      eci.has_mapper = ech->hasMapper();
+      eci.pull_retry_period = ech->pullRetryPeriod_ms();
+      eci.max_queue_length = ech->maxQueueLength();
+      eci.max_num_proxies = ech->maxNumProxies();
+      eci.cycle_period = ech->cyclePeriod_ns();
+      if(ech->properties().hasAttr("FilterId")) {
+        string rid = ech->properties().attrString("FilterId");
+        eci.filter_id = rid.c_str();
+      }
+      clist[i]=eci;
+    }
+    catch(...) {
+    }
+  }
+}
+
+
+
+
+ 
 
 }; // end namespace OmniEvents
 

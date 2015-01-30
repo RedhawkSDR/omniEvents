@@ -97,6 +97,8 @@ LD       := $(CXX)
 LDFLAGS  += @CXXFLAGS@ # CXXFLAGS
 LDFLAGS  += @LDFLAGS@ # LDFLAGS
 LDLIBS   += @LIBS@ # LIBS
+LDLIBS   += @BOOST_SYSTEM_LIB@ # LIBS
+LDLIBS   += @BOOST_THREAD_LIB@ # LIBS
 
 ##
 ## Command to make a symbolic link from $(1) to $(2)

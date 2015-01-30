@@ -50,7 +50,7 @@ class PersistNode;
 // Event Channel Factory
 
 class EventChannelFactory_i :
-  public virtual POA_omniEvents::EventChannelFactory,
+  public virtual POA_omniEvents::EventChannelFactoryExt,
   public PortableServer::RefCountServantBase,
   public Servant
 {
@@ -79,6 +79,17 @@ public: // CORBA METHODS
     const char* channel_name
   );
    
+
+  /**
+     EventChannelFactoryExt methods
+   */
+
+  void                          delete_all();
+  CORBA::Boolean                exists( const char *channel_name );
+  CosEventChannelAdmin::EventChannel_ptr  get_channel( const char *channel_name );
+  void                          list_channels( const CORBA::ULong  how_many,
+                                   omniEvents::EventChannelInfoList_out elist,
+                                   omniEvents::EventChannelInfoIterator_out eiter);
 
 public:
   /** Builds an EventChannelFactory_i from the parsed logfile data. */

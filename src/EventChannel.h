@@ -33,7 +33,7 @@
 #else
 #  include <iostream.h>
 #endif
-
+#include <string>
 #include "Servant.h"
 #include "PersistNode.h"
 #include "omniEvents.hh"
@@ -45,6 +45,10 @@
 
 #ifdef HAVE_STD_IOSTREAM
 using namespace std;
+#endif
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
 #endif
 
 namespace OmniEvents {
@@ -163,6 +167,8 @@ public:
   
   void output(ostream& os);
 
+  std::string  name();
+
   //
   // Accessors
   ConsumerAdmin_i& consumerAdmin() const
@@ -180,6 +186,8 @@ public:
     {return _properties.attrLong("MaxNumProxies",MAX_NUM_PROXIES);}
   unsigned long cyclePeriod_ns() const
     {return _properties.attrLong("CyclePeriod_ns",CYCLE_PERIOD_NS);}
+
+  bool hasMapper() { return ( _mapper != NULL ); };
   
 
 private:
@@ -202,6 +210,7 @@ private:
   Mapper*                        _mapper;
   omni_mutex                     _lock; //< Protects _refCount
   int                            _refCount;
+  std::string                    _name;
 };
 
 
@@ -214,6 +223,12 @@ public:
   void insert(EventChannel_i* channel);
   void erase(EventChannel_i* channel);
   void output(ostream &os);
+  
+  // extend store to support new EventChannelFactoryExt interface
+  bool exists( const std::string &cname);
+  void empty();
+  uint64_t  size() { return _channels.size(); };
+  void list( omniEvents::EventChannelInfoList &clist  );
 private:
   set<EventChannel_i*> _channels;
   omni_mutex           _lock;

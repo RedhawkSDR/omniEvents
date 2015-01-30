@@ -26,7 +26,9 @@ include ../config.mk
 SOURCE_FILES = \
  eventc.cc \
  eventf.cc \
+ eventl.cc \
  rmeventc.cc \
+ rmeventall.cc \
 
 ifeq ($(CORBA_ORB),omniORB4)
   SOURCE_FILES += events.cc
@@ -42,7 +44,9 @@ install: $(EXE_FILES)
 	$(INSTALL) eventc$(EXEEXT)   $(INSTALL_BIN)
 	$(INSTALL) eventf$(EXEEXT)   $(INSTALL_BIN)
 	$(INSTALL) events$(EXEEXT)   $(INSTALL_BIN)
+	$(INSTALL) eventl$(EXEEXT)   $(INSTALL_BIN)
 	$(INSTALL) rmeventc$(EXEEXT) $(INSTALL_BIN)
+	$(INSTALL) rmeventall$(EXEEXT) $(INSTALL_BIN)
 
 uninstall:
 	$(RM) $(patsubst %,$(INSTALL_BIN)/%,$(EXE_FILES))

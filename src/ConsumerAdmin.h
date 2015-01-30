@@ -84,6 +84,8 @@ public:
   /** Save this object's state to a stream. */
   void output(ostream& os);
 
+  long  queueLength();
+
 private:
   const EventChannel_i&     _channel;
   EventQueue                _queue;

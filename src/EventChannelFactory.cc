@@ -30,7 +30,7 @@
 #include "Orb.h"
 #include "EventChannel.h"
 #include "PersistNode.h"
-
+#include "Iterator.h"
 #include <memory>
 
 #ifdef HAVE_OMNIORB4
@@ -39,7 +39,17 @@
 #  define STR_MATCH(s1,s2) (0==::strcmp((s1),(s2)))
 #endif
 
+
 namespace OmniEvents {
+
+
+typedef  OmniEvents::Iterator<  omniEvents::EventChannelInfo,
+                                   omniEvents::EventChannelInfo_out,
+                                   omniEvents::EventChannelInfoList,
+                                   omniEvents::EventChannelInfoList_out,
+                                   omniEvents::EventChannelInfoIterator,
+                                   POA_omniEvents::EventChannelInfoIterator >   EventChannelInfoIter;
+
 
 //------------------------------------------------------------------------
 //           Event Channel Factory Interface Implementation
@@ -319,6 +329,74 @@ EventChannelFactory_i::output(ostream &os)
   os<<" ;;\n";
   _channels.output(os);
 }
+
+
+
+
+void 
+EventChannelFactory_i::delete_all()
+{
+  // request destroy operation against all managed event
+  // channels....
+  DB(5,"EventChannelFactory_i::delete_all() - Request to delete ALL CHANNELS :  "<< _channels.size() );
+  _channels.empty();
+
+}
+
+
+
+CORBA::Boolean
+EventChannelFactory_i::exists( const char *channel_name)
+{
+  CORBA::Boolean retval=_channels.exists( channel_name );
+
+  return retval;
+}
+
+
+CosEventChannelAdmin::EventChannel_ptr 
+EventChannelFactory_i::get_channel( const char *channel_name) 
+{
+
+  using namespace PortableServer;
+  CosEventChannelAdmin::EventChannel_var result;
+  try
+    {
+      ObjectId_var oid =PortableServer::string_to_ObjectId(channel_name);
+      CORBA::Object_var obj =Orb::inst()._omniINSPOA->id_to_reference(oid.in());
+      result=CosEventChannelAdmin::EventChannel::_narrow(obj.in());
+    }
+  catch(POA::ObjectNotActive&)
+    {
+      DB(10,"Failed to join_channel. Object not active.")
+        throw event::EventChannelNotFound();
+    }
+  catch(CORBA::UserException& ex)
+    {
+      DB(2,"Failed to join_channel. Converting UserException"
+         IFELSE_OMNIORB4(" '"<<ex._name()<<"'",<<) " into UNKNOWN.")
+        throw CORBA::UNKNOWN();
+    }
+  return result._retn();
+}
+
+
+
+void 
+EventChannelFactory_i::list_channels( const CORBA::ULong  how_many,
+                                             omniEvents::EventChannelInfoList_out elist,
+                                             omniEvents::EventChannelInfoIterator_out eiter)
+{
+    uint64_t size = _channels.size();
+    DB(5,"EventChannelFactory::_list_channels - Listing all channels : " <<  size );
+
+    // create copy of entire table...
+    omniEvents::EventChannelInfoList* all = new omniEvents::EventChannelInfoList(size);
+    all->length(size);
+    _channels.list(*all);
+    eiter = EventChannelInfoIter::list( how_many, elist, all );
+}
+
 
 
 }; // end namespace OmniEvents

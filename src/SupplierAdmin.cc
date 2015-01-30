@@ -173,4 +173,9 @@ void SupplierAdmin_i::output(ostream& os)
 }
 
 
+  long SupplierAdmin_i::queueLength() {
+    return _queue.size();
+  }
+
+
 }; // end namespace OmniEvents

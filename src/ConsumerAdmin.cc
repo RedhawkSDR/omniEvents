@@ -158,4 +158,9 @@ void ConsumerAdmin_i::output(ostream& os)
 }
 
 
+
+  long ConsumerAdmin_i::queueLength() {
+    return _queue.size();
+  }
+
 }; // end namespace OmniEvents

@@ -245,8 +245,10 @@ by default.
   ----      -----         -----------                                
   eventc    eventc.exe    Command to create a channel.               
   eventf    eventf.exe    Command to federate (link) two channels.   
+  eventl    ----------    Command to list all managed channels
   events    events.exe    Command to stream events to or from a file.
   rmeventc  rmeventc.exe  Command to remove a channel.               
+  rmeventall -----------  Command to remove all managed channels.               
 
 Finally, four example clients are provided. These enable you to test whether or 
 not your omniEvents daemon is really working. They are built in the examples/ 
@@ -1182,6 +1184,48 @@ COPYRIGHT
    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 --------------------------------------------------------------------------------
+eventl - list all event channels managed by the omniEvents service
+
+`eventl'  -d  
+
+DESCRIPTION
+
+   `eventl' will provide a listing of all known event channels. Without the "-d" option 
+   a brief listing is returned as follows:
+        CHANNEL:  <channel name>  [(unmapped)]
+
+   If the channel name is followed by the text "(unmapped)", then that channel has no
+   mapping identier can cannot be retrived or delete (rmeventc) using URI methods. 
+   Unmapped channels were created without InsName critera. Mapped channels can be dentified 
+   using the URI name methods,  corbaloc::: or corbaname:::.
+
+OPTIONS:
+
+    -d   details the criteria listing when the channels was created.
+
+    -h:   Display a short summary of command-line options.
+
+    -ORBparameter value:
+          Standard omniORB options. see omniORB documentation for details. This 
+          option is commonly used to set the omniORB `traceLevel', in order to 
+          get more detailed output.
+
+          Example: `-ORBtraceLevel 5'
+
+ENVIRONMENT VARIABLES
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © REDHAWK SDR
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+--------------------------------------------------------------------------------
 events - stream events from or to a CORBA EventChannel 
 
 `events' -n <channel-name> -s -h -ORB<parameter> <value> <channel-uri> 
@@ -1284,4 +1328,43 @@ COPYRIGHT
 
    This is free software; see the source for copying conditions. There is NO 
    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+--------------------------------------------------------------------------------
+rmeventc - destroy all managed CORBA EventChannels
+
+`rmeventall' -ORB<parameter>  [-n] [-h] 
+
+DESCRIPTION
+
+   `rmeventall' removes all event channels from the service by calling the `destroy()' operation. 
+   If the "-n" option is present, then the correspond channel name will be looked up in the 
+   root naming context,  and the name is unbound (removed) from the Name Service.
+
+   Example: `rmeventall -n'
+
+OPTIONS
+
+    -n   removed channel names from the NamingService.
+
+    -h:   Display a short summary of command-line options.
+
+    -ORBparameter value:
+          Standard omniORB options. see omniORB documentation for details. This 
+          option is commonly used to set the omniORB `traceLevel', in order to 
+          get more detailed output.
+
+          Example: `-ORBtraceLevel 5'
+
+ENVIRONMENT VARIABLES
+
+    OMNIORB_CONFIG:
+          The location of the omniORB configuration file.
+
+COPYRIGHT
+
+   Copyright © REDHAWK SDR
+
+   This is free software; see the source for copying conditions. There is NO 
+   warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
 

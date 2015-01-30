@@ -39,8 +39,6 @@ extern int optind;
 #  include "getopt.h"
 #endif
 
-#include <cstdlib>
-
 #include "main.h"
 #include "omniEvents.h"
 #include "naming.h"
@@ -49,6 +47,7 @@ extern int optind;
 #include "Orb.h"
 #include "daemon.h"
 #include "version.h"
+#include "IteratorSupport.h"
 
 #if defined(HAVE_SIGNAL_H) && defined(HAVE_SIGSET)
 #  include <signal.h>
@@ -63,6 +62,7 @@ extern int optind;
 #endif
 
 #include <stdio.h> // for sprintf
+#include <stdlib.h>
 
 int main(int argc, char** argv)
 {
@@ -243,6 +243,11 @@ int main(int argc, char** argv)
   logfile.incarnateFactory(initialState);
   delete initialState; // Tidy up.
   initialState=NULL;
+  PortableServer::POA_ptr iteratorGC;
+  {
+    /// create Iterator GC support...
+    iteratorGC = createGCPOA( Orb::inst()._RootPOA.in(), "Iterators" );
+  }
 
   {
     //

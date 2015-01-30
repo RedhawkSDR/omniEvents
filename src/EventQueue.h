@@ -85,6 +85,8 @@ public:
     }
   }
 
+  inline long size() { return _size;};
+
 private:
   /** Always points to the next slot to which an event will be written. */
   long             _next;

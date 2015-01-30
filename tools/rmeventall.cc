@@ -21,7 +21,7 @@
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // Description:
-//    Destroys the named EventChannel.
+//    Destroys all the channels managed by the service
 //	
 
 #ifdef HAVE_CONFIG_H
@@ -46,13 +46,12 @@ extern int optind;
 #  include <iostream.h>
 #endif
 
-#include <cstdio>
-
 #ifdef HAVE_STD_IOSTREAM
 using namespace std;
 #endif
 
-#include "CosEventChannelAdmin.hh"
+#include <stdio.h>
+#include "omniEvents.hh"
 #include "naming.h"
 
 static void usage(int argc, char **argv);
@@ -61,7 +60,9 @@ int
 main(int argc, char **argv)
 {
   int result =1;
-
+  bool needNameService =false;
+  const char* factoryName ="EventChannelFactory";
+  int cleanns=0;
   //
   // Start orb.
 #if defined(HAVE_OMNIORB4)
@@ -75,20 +76,24 @@ main(int argc, char **argv)
 
   CosNaming::Name ecName =str2name("EventChannel");
 
-  while ((c = getopt(argc,argv,"n:h")) != EOF)
+  while ((c = getopt(argc,argv,"nh")) != EOF)
   {
-     switch (c)
-     {
-        case 'n': ecName=str2name(optarg);
-                  break;
+    switch (c)
+      {
+      case 'n': cleanns=1;
+        needNameService=true;
+        break;
 
-        case 'h': usage(argc,argv);
-                  exit(0);
+      case 'h': usage(argc,argv);
+        exit(0);
 
-        default : usage(argc,argv);
-                  exit(-1);
-     }
+      default : usage(argc,argv);
+        exit(-1);
+      }
   }
+
+ // Need the naming service to find the factory if there is no URI argument.
+  needNameService=(needNameService || optind>=argc);
 
   //
   // Use one big try...catch block.
@@ -97,48 +102,72 @@ main(int argc, char **argv)
   try
   {
     CORBA::Object_var obj;
-    
     //
-    // Obtain object reference to EventChannel
+    // Get Name Service root context.(we can carry on without it though)
+    CosNaming::NamingContext_var rootContext=CosNaming::NamingContext::_nil();
+    try {
+      action="resolve initial reference 'NameService'";
+      obj=orb->resolve_initial_references("NameService");
+      rootContext=CosNaming::NamingContext::_narrow(obj);
+      if(CORBA::is_nil(rootContext))
+          throw CORBA::OBJECT_NOT_EXIST();
+    }
+    catch (CORBA::Exception& ex) {
+       if(needNameService)
+           throw;
+       else
+           cerr<<"Warning - failed to "<<action<<"."<<endl;
+    }
+
+    //
+    // Obtain reference to the Event Channel Factory implementation.
     // (from command-line argument or from the Naming Service).
     if(optind<argc)
     {
       action="convert URI from command line into object reference";
-      std::cout << " URI : " << argv[optind] << std::endl;
       obj=orb->string_to_object(argv[optind]);
     }
     else
     {
-      //
-      // Get Name Service root context.
-      action="resolve initial reference 'NameService'";
-      obj=orb->resolve_initial_references("NameService");
-      CosNaming::NamingContext_var rootContext=
-        CosNaming::NamingContext::_narrow(obj);
-      if(CORBA::is_nil(rootContext))
-          throw CORBA::OBJECT_NOT_EXIST();
-
-      //
-      // Obtain reference to the Event Channel.
-      action="find Event Channel in naming service";
-      obj=rootContext->resolve(ecName);
-
-      //
-      // Unbind the Channel's reference in the naming service.
-      action="unbind Event Channel from naming service";
-      rootContext->unbind(ecName);
+      action="find Event Channel Factory in naming service";
+      obj=rootContext->resolve(str2name(factoryName));
+      if(CORBA::is_nil(obj)) {
+        std::cout << "NamingService failed to find EventChannelFactory...." <<std::endl;
+        exit(1);
+      }
     }
-    
-    action="narrow object reference to event channel";
-    CosEventChannelAdmin::EventChannel_var channel =
-      CosEventChannelAdmin::EventChannel::_narrow(obj);
-    if(CORBA::is_nil(channel))
-        throw CORBA::OBJECT_NOT_EXIST();
-    
+
+    action="narrow object reference to event channel factory";
+    omniEvents::EventChannelFactoryExt_var factory =
+      omniEvents::EventChannelFactoryExt::_narrow(obj);
+    if(CORBA::is_nil(factory))
+    {
+      cerr << "Failed to narrow Event Channel Factory reference." << endl;
+      exit(1);
+    }
+
+    if ( cleanns ) {
+      try {
+        // TODO Remove all naming service entries...
+        omniEvents::EventChannelInfoIterator_var eiter;
+        omniEvents::EventChannelInfoList_var     elist;
+        factory->list_channels(0, elist, eiter );
+        omniEvents::EventChannelInfo_var einfo;
+        if ( !CORBA::is_nil( eiter ) ) {
+          while ( eiter->next_one( einfo ) == true ) {
+            rootContext->unbind( str2name(einfo->channel_name) );
+          }
+        }
+      }
+      catch(...) {
+        std::cerr << " Listing of event channels failed..." << std::endl;
+      }
+    }
+
     //
     // Destroy the EventChannel.
-    action="destroy Event Channel";
-    channel->destroy();
+    action="delete all Event Channels";
+    factory->delete_all();
 
     //
     // Clean up nicely.
@@ -192,14 +221,14 @@ static void
 usage(int argc, char **argv)
 {
   cerr<<
-"\nDestroy an EventChannel.\n"
-"syntax: "<<(argc?argv[0]:"rmeventc")<<" OPTIONS [CHANNEL_URI]\n"
+"\nDestroy All EventChannel.\n"
+"syntax: "<<(argc?argv[0]:"rmeventall")<<" OPTIONS [FACTORY_URI]\n"
 "\n"
-"CHANNEL_URI: The event channel may be specified as a URI.\n"
+"FACTORY_URI: The factory may be specified as a URI.\n"
 " This may be an IOR, or a corbaloc::: or corbaname::: URI.\n"
-"\n"
+" For example: corbaloc::localhost:11169/omniEvents\n"
 "OPTIONS:                                         DEFAULT:\n"
-" -n NAME  channel name (if URI is not specified)  [\"EventChannel\"]\n"
+" -n       clean channel name from root directory (if exists)\n"
 " -h       display this help text\n" << endl;
 }
 

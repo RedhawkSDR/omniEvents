@@ -80,3 +80,30 @@ rmeventc.o: \
 # ../idl/CosEventComm.hh  from  ../idl/CosEventChannelAdmin.hh
 # ../src/naming.h  from  rmeventc.cc
 
+rmeventall.o: \
+  rmeventall.cc \
+  ../idl/COS_sysdep.h \
+  ../idl/omniEvents.hh \
+  ../src/getopt.h \
+  ../idl/FT.hh \
+  ../idl/CosEventChannelAdmin.hh \
+  ../idl/EventChannelAdmin.hh \
+  ../src/scour.h \
+  ../src/config.h \
+  ../idl/CosLifeCycle.hh \
+  ../idl/CosEventComm.hh \
+  ../src/naming.h \
+
+eventl.o: \
+  eventl.cc \
+  ../idl/COS_sysdep.h \
+  ../idl/omniEvents.hh \
+  ../src/getopt.h \
+  ../idl/FT.hh \
+  ../idl/CosEventChannelAdmin.hh \
+  ../idl/EventChannelAdmin.hh \
+  ../src/scour.h \
+  ../src/config.h \
+  ../idl/CosLifeCycle.hh \
+  ../idl/CosEventComm.hh \
+  ../src/naming.h \

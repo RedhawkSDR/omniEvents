@@ -1,144 +1,164 @@
-/* include/config.h.in.  Generated from configure.ac by autoheader.  */
+/* src/config.h.  Generated from config.h.in by configure.  */
+/* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
    systems. This function is required for `alloca.c' support on those systems.
    */
-#undef CRAY_STACKSEG_END
+/* #undef CRAY_STACKSEG_END */
 
 /* Define to 1 if using `alloca.c'. */
 /* #undef C_ALLOCA */
 
 /* define if fstream::open() accepts third parameter. */
-#undef FSTREAM_OPEN_PROT
+/* #undef FSTREAM_OPEN_PROT */
 
 /* Define to 1 if you have `alloca', as a function or macro. */
-/* #undef HAVE_ALLOCA */
+#define HAVE_ALLOCA 1
 
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
-#undef HAVE_ALLOCA_H
+#define HAVE_ALLOCA_H 1
 
 /* define if bool is a built-in type */
-/* #undef HAVE_BOOL */
+#define HAVE_BOOL /**/
+
+/* define if the Boost library is available */
+#define HAVE_BOOST 1
+
+/* define if the Boost::System library is available */
+#define HAVE_BOOST_SYSTEM 1
+
+/* define if the Boost::Thread library is available */
+#define HAVE_BOOST_THREAD 1
 
 /* Define to 1 if you have the <cmath> header file. */
-#define HAVE_CMATH
+#define HAVE_CMATH 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
-#define HAVE_FCNTL_H
+#define HAVE_FCNTL_H 1
 
 /* define if we have fstream::attach(). */
 /* #undef HAVE_FSTREAM_ATTACH */
 
-/* define if we have fstream::open(). ?? */
-#define HAVE_FSTREAM_OPEN
+/* define if we have fstream::open(). */
+#define HAVE_FSTREAM_OPEN 1
 
 /* Define to 1 if you have the `gethostname' function. */
-#undef HAVE_GETHOSTNAME
+#define HAVE_GETHOSTNAME 1
 
 /* Define to 1 if you have the `getopt' function. */
-#undef HAVE_GETOPT
+#define HAVE_GETOPT 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
+#define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the <iomanip> header file. */
-#define HAVE_IOMANIP
+#define HAVE_IOMANIP 1
 
 /* Define to 1 if you have the <iomanip.h> header file. */
-#define HAVE_IOMANIP_H
+/* #undef HAVE_IOMANIP_H */
 
 /* Define to 1 if you have the <iostream> header file. */
-#define HAVE_IOSTREAM
+#define HAVE_IOSTREAM 1
 
 /* Define to 1 if you have the <iostream.h> header file. */
-#define HAVE_IOSTREAM_H
+/* #undef HAVE_IOSTREAM_H */
 
 /* Define to 1 if you have the <libc.h> header file. */
-#undef HAVE_LIBC_H
+/* #undef HAVE_LIBC_H */
 
-/* Define to 1 if your system has a working `malloc' function. ?? */
-#define HAVE_MALLOC
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
+#define HAVE_MALLOC 1
 
 /* Define to 1 if you have the <malloc.h> header file. */
-#define HAVE_MALLOC_H
+#define HAVE_MALLOC_H 1
 
 /* Define to 1 if you have the <memory.h> header file. */
-#define HAVE_MEMORY_H
+#define HAVE_MEMORY_H 1
 
-/* define if the compiler implements namespaces ?? */
-#define HAVE_NAMESPACES
+/* define if the compiler implements namespaces */
+#define HAVE_NAMESPACES /**/
 
 /* "define if omniORB3 is available." */
-#undef HAVE_OMNIORB3
+/* #undef HAVE_OMNIORB3 */
 
 /* "define if omniORB4 is available." */
-#define HAVE_OMNIORB4
+#define HAVE_OMNIORB4 1
+
+/* Define to 1 if you have the `on_exit' function. */
+#define HAVE_ON_EXIT 1
 
 /* Define to 1 if you have the <process.h> header file. */
-#define HAVE_PROCESS_H
+/* #undef HAVE_PROCESS_H */
 
 /* Define if you have POSIX threads libraries and header files. */
-#undef HAVE_PTHREAD
+#define HAVE_PTHREAD 1
 
 /* Define to 1 if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
+
+/* Define to 1 if you have the `sigset' function. */
+/* #undef HAVE_SIGSET */
 
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */
 /* #undef HAVE_STAT_EMPTY_STRING_BUG */
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
+#define HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
 
-/* define if C++ iostream is in namespace std. ?? */
+/* define if C++ iostream is in namespace std. */
 #define HAVE_STD_IOSTREAM 1
 
-/* define if C++ Standard Template Library is in namespace std ?? */
-#define HAVE_STD_STL
+/* define if C++ Standard Template Library is in namespace std */
+#define HAVE_STD_STL 1
 
-/* define if the compiler supports Standard Template Library ?? */
-#define HAVE_STL
+/* define if the compiler supports Standard Template Library */
+#define HAVE_STL /**/
 
 /* Define to 1 if you have the `strchr' function. */
-/* #undef HAVE_STRCHR */
+#define HAVE_STRCHR 1
 
-/* Define to 1 if you have the `strdup' function. ?? */
-/* #undef HAVE_STRDUP */
+/* Define to 1 if you have the `strdup' function. */
+#define HAVE_STRDUP 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
+#define HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
-#define HAVE_STRING_H
+#define HAVE_STRING_H 1
+
+/* Define to 1 if you have the <syslog.h> header file. */
+#define HAVE_SYSLOG_H 1
 
 /* Define to 1 if you have the <sys/param.h> header file. */
-#undef HAVE_SYS_PARAM_H
+#define HAVE_SYS_PARAM_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
-#define HAVE_SYS_STAT_H
+#define HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-#define HAVE_SYS_TYPES_H
+#define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <sys/utsname.h> header file. */
-#undef HAVE_SYS_UTSNAME_H
+#define HAVE_SYS_UTSNAME_H 1
 
 /* Define to 1 if you have the `tzset' function. */
-/* #undef HAVE_TZSET */
+#define HAVE_TZSET 1
 
 /* Define to 1 if you have the `uname' function. */
-/* #undef HAVE_UNAME */
+#define HAVE_UNAME 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
+#define HAVE_UNISTD_H 1
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-#undef LSTAT_FOLLOWS_SLASHED_SYMLINK
+#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "alex.omnievents@firetree.net"
@@ -152,6 +172,9 @@
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "omnievents"
 
+/* Define to the home page for this package. */
+/* #undef PACKAGE_URL */
+
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "2.6.2"
 
@@ -160,91 +183,99 @@
 /* #undef PTHREAD_CREATE_JOINABLE */
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-/* #undef RETSIGTYPE */
+#define RETSIGTYPE void
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
-   automatically deduced at run-time.
-        STACK_DIRECTION > 0 => grows toward higher addresses
-        STACK_DIRECTION < 0 => grows toward lower addresses
-        STACK_DIRECTION = 0 => direction of growth unknown */
+   automatically deduced at runtime.
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
 /* #undef STACK_DIRECTION */
 
-/* Define to 1 if you have the ANSI C header files. ?? */
-#define STDC_HEADERS
+/* Define to 1 if you have the ANSI C header files. */
+#define STDC_HEADERS 1
 
-/* for omniORB ?? */
-#define __OSVERSION__ 5
+/* for omniORB */
+#define __OSVERSION__ 2
+
+/* needed by DEC/Compaq/HP cxx to activate ANSI standard iostream. */
+#define __USE_STD_IOSTREAM 1
 
 /* for OmniORB on AIX */
-#undef __aix__
+/* #undef __aix__ */
 
 /* for OmniORB on AlphaProcessor */
-#undef __alpha__
+/* #undef __alpha__ */
 
 /* for OmniORB on ArmProcessor */
-#undef __arm__
+/* #undef __arm__ */
 
 /* for OmniORB on Darwin */
-#undef __darwin__
+/* #undef __darwin__ */
 
 /* for OmniORB on FreeBSD */
-#undef __freebsd__
+/* #undef __freebsd__ */
 
 /* for OmniORB on HppaProcessor */
-#undef __hppa__
+/* #undef __hppa__ */
 
 /* for OmniORB on HPUX */
-#undef __hpux__
+/* #undef __hpux__ */
 
 /* for OmniORB on ia64Processor */
-#undef __ia64__
+/* #undef __ia64__ */
 
 /* for OmniORB on IRIX */
-#undef __irix__
+/* #undef __irix__ */
 
 /* for OmniORB on Linux, Cygwin */
-#undef __linux__
+#define __linux__ 1
 
 /* for OmniORB on m68kProcessor */
-#undef __m68k__
+/* #undef __m68k__ */
 
 /* for OmniORB on IndigoProcessor */
-#undef __mips__
+/* #undef __mips__ */
 
 /* for OmniORB on NextStep */
-#undef __nextstep__
+/* #undef __nextstep__ */
 
 /* for OmniORB on OSF1 (Tru64) */
-#undef __osf1__
+/* #undef __osf1__ */
 
 /* for OmniORB on OSR5 */
-#undef __osr5__
+/* #undef __osr5__ */
 
 /* for OmniORB on PowerPCProcessor */
-#undef __powerpc__
+/* #undef __powerpc__ */
 
 /* for OmniORB on s390Processor */
-#undef __s390__
+/* #undef __s390__ */
 
 /* for OmniORB on SparcProcessor */
-#undef __sparc__
+/* #undef __sparc__ */
 
 /* for OmniORB on SunOS (Solaris) */
-#undef __sunos__
+/* #undef __sunos__ */
 
 /* for OmniORB on x86Processor */
-#define __x86__ 1
+/* #undef __x86__ */
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
 
-/* Define as `__inline' if that's what the C compiler calls it, or to nothing
-   if it is not supported. */
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
 /* #undef inline */
+#endif
 
-/* Define to `unsigned' if <sys/types.h> does not define. */
-#undef size_t
+/* Define to rpl_malloc if the replacement function should be used. */
+/* #undef malloc */
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* #undef size_t */
 
 
 /* Clean away the PACKAGE_* macros unless they are needed. */

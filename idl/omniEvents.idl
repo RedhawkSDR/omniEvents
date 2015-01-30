@@ -134,6 +134,77 @@ module omniEvents
     // EventChannel join_channel( in string channel_name )...;   *DO NOT USE*
   };
 
+
+  interface EventChannelInfoIterator;
+
+
+  exception  ChannelDoesNotExist {};
+
+  struct EventChannelInfo {
+    string          channel_name;
+    long            pull_retry_period;
+    long            max_queue_length;
+    long            max_num_proxies;
+    long            cycle_period;
+    boolean         has_mapper;
+    string          filter_id;
+  };
+
+  typedef sequence< EventChannelInfo >          EventChannelInfoList;
+
+  /**
+     EventChannelFactoryExt
+
+     Support for introspection of the omniEvents service and event channel
+     management.
+  */
+  interface EventChannelFactoryExt: EventChannelFactory {
+
+    /**
+       delete_all
+
+       Will perform channel destroy operations on all existing channels being
+       managed by the sevice.  
+    */
+    void      delete_all();
+
+
+    /**
+       exists
+         
+       Returns true if the channel exits
+    */
+    boolean   exists( in string channel_name ) ;
+
+
+    /**
+       get_channel
+       
+     */
+    CosEventChannelAdmin::EventChannel  get_channel( in string channel_name ) 
+      raises ( ChannelDoesNotExist ) ;
+
+    
+    /**
+       list_channels
+       
+     */
+    void      list_channels( in unsigned long how_many,
+                       out EventChannelInfoList elist,
+                       out EventChannelInfoIterator eiter );
+
+
+  };
+
+  interface EventChannelInfoIterator {
+    boolean next_one ( out EventChannelInfo eci );
+    boolean next_n (  in unsigned long how_many,
+                      out EventChannelInfoList ecil );
+    void destroy();
+  };
+
+
+
 };
 
 #endif // _OmniEvents_idl_

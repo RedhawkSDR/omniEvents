@@ -78,6 +78,11 @@ AC_CHECK_FUNCS([gethostname strchr strdup tzset uname getopt on_exit])
 
 # Checks for libraries.
 
+AX_BOOST_BASE([1.41])
+AX_BOOST_THREAD
+AX_BOOST_SYSTEM
+
+
 # Corba (Needs to go last, as it sets some libraries that may not run without
 # LD_LIBRARY_PATH being set.
 AC_CORBA_ORB

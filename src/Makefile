@@ -38,6 +38,8 @@ LIBRARY_SOURCE_FILES = \
  SupplierAdmin.cc \
  omniEventsLog.cc \
  version.cc \
+ IteratorSupport.cc \
+
 
 DAEMON_SOURCE_FILES := \
  $(LIBRARY_SOURCE_FILES) \
