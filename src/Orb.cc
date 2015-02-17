@@ -20,6 +20,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #include "Orb.h"
 
@@ -85,7 +86,7 @@ void Orb::resolveInitialReferences()
       DB(1,"Warning - failed to "<<action<<
          IFELSE_OMNIORB4(". Exception: "<<ex._name(),"."))
     }
-  
+
 #ifdef HAVE_OMNIORB4
     action="resolve initial reference 'POACurrent'";
     obj=_orb->resolve_initial_references("POACurrent");
@@ -173,7 +174,7 @@ void Orb::run()
       usedCallbacks.pop_front();
     }
   } // end loop while(!_shutdownRequested)
-  
+
   // Clean up all outstanding requests.
   omni_mutex_lock l(_deferredRequestsLock);
   while(!_deferredRequests.empty())

@@ -1,3 +1,5 @@
+# Modified by REDHAWK (United States Government) - 2015
+
 eventc.o: \
   eventc.cc \
   ../idl/COS_sysdep.h \

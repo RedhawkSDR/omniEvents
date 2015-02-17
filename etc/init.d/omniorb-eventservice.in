@@ -6,6 +6,8 @@
 #   This file is part of the omniEvents application, most of which is licensed
 #   under the Lesser GPL. This file ONLY is hereby released into the public
 #   domain by Alex Tingle (2004/07/11).
+#
+#   Modified by REDHAWK (United States Government) - 2015
 
 #
 # This SysV init script is LSB 1.3 compliant.
@@ -26,6 +28,7 @@
 
 # Defaults for chkconfig in case LSB fails
 # chkconfig: - 91 09
+
 
 # ---------------------- the real stuff starts here----------------------------
 

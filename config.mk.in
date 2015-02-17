@@ -20,6 +20,7 @@
 #    License along with this library; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#    Modified by REDHAWK (United States Government) - 2015
 
 # @configure_input@
 
@@ -132,7 +133,7 @@ CxxBuildExecutable = $(LD) $(2) $(LDFLAGS) -o $(1) $(LDLIBS)
 
 CXX_LINK_SO_LIB := @CXX_LINK_SO_LIB@
 ifeq ($(CXX_LINK_SO_LIB),)
-  CxxBuildShared = 
+  CxxBuildShared =
 else
   CxxBuildShared = \
     soname=$(4) && \
@@ -151,7 +152,7 @@ SharedLibFullName = $(SharedLibName).$(2)
 SharedLibSoName   = $(basename $(basename $(SharedLibFullName)))
 
 ifeq ($(CXX_LINK_SO_LIB),)
-  InstallSharedLib = 
+  InstallSharedLib =
 else
   InstallSharedLib = \
     $(INSTALL) -d $(3) && \

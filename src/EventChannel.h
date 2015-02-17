@@ -20,6 +20,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #ifndef OMNIEVENTS__EVENTCHANNEL_H
 #define OMNIEVENTS__EVENTCHANNEL_H
@@ -158,13 +159,13 @@ public:
    *
    * Outgoing calls are always sent as deferred requests, to avoid blocking
    * while we wait for them to return.
-   * 
+   *
    */
   void mainLoop();
 
   void _add_ref();
   void _remove_ref(); ///< Shutdown the thread when refCount reaches zero.
-  
+
   void output(ostream& os);
 
   std::string  name();
@@ -188,7 +189,7 @@ public:
     {return _properties.attrLong("CyclePeriod_ns",CYCLE_PERIOD_NS);}
 
   bool hasMapper() { return ( _mapper != NULL ); };
-  
+
 
 private:
   /** Construct a new Mapper object, and registers it in the INSPOA. */
@@ -199,7 +200,7 @@ private:
    * channelName.
    */
   void createPoa(const char* channelName);
-  
+
 private:
   EventChannelStore*             _eventChannelStore;
   SupplierAdmin_i*               _supplierAdmin;
@@ -223,7 +224,7 @@ public:
   void insert(EventChannel_i* channel);
   void erase(EventChannel_i* channel);
   void output(ostream &os);
-  
+
   // extend store to support new EventChannelFactoryExt interface
   bool exists( const std::string &cname);
   void empty();

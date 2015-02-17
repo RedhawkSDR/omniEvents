@@ -22,7 +22,8 @@
 //
 // Description:
 //    Destroys the named EventChannel.
-//	
+//
+//    Modified by REDHAWK (United States Government) - 2015
 
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
@@ -190,6 +191,6 @@ getChannel(const char* sior)
     CosEventChannelAdmin::EventChannel::_narrow(obj);
   if(CORBA::is_nil(channel))
       throw CORBA::OBJECT_NOT_EXIST();
-  
+
   return channel._retn();
 }

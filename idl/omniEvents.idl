@@ -20,6 +20,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #ifndef _OMNIEVENTS_IDL_
 #define _OMNIEVENTS_IDL_
@@ -80,7 +81,7 @@ module omniEvents
    * Key should always be {id:"EventChannel", kind:"object interface"}.
    *
    * <b>Valid criteria are:</b>
-   * 
+   *
    * @param PullRetryPeriod_ms [Type: unsigned long. Unit: millisecond.
    *          Default: 1000 (1 second)]\n
    *          The delay between calls to pull() made by omniEvents out
@@ -164,14 +165,14 @@ module omniEvents
        delete_all
 
        Will perform channel destroy operations on all existing channels being
-       managed by the sevice.  
+       managed by the sevice.
     */
     void      delete_all();
 
 
     /**
        exists
-         
+
        Returns true if the channel exits
     */
     boolean   exists( in string channel_name ) ;
@@ -179,15 +180,15 @@ module omniEvents
 
     /**
        get_channel
-       
+
      */
-    CosEventChannelAdmin::EventChannel  get_channel( in string channel_name ) 
+    CosEventChannelAdmin::EventChannel  get_channel( in string channel_name )
       raises ( ChannelDoesNotExist ) ;
 
-    
+
     /**
        list_channels
-       
+
      */
     void      list_channels( in unsigned long how_many,
                        out EventChannelInfoList elist,

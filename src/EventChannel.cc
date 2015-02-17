@@ -20,6 +20,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #include "EventChannel.h"
 #include "ConsumerAdmin.h"
@@ -55,7 +56,7 @@ void EventChannel_i::destroy()
 
   // Prevent further incoming connections.
   _shutdownRequested=true;
-  
+
   DB(5,"EventChannel_i::destroy check state poaMananger--> state:" << _poaManager->get_state() );
   if (  _poaManager->get_state() ==  PortableServer::POAManager::HOLDING ) {
     _poaManager->activate();
@@ -118,7 +119,7 @@ void EventChannel_i::activate(
   }
 
   activateObjectWithId("EventChannel");
-  
+
   // Remove the constructor's reference. This object will now be destroyed when
   // the POA releases it.
   _remove_ref();
@@ -243,7 +244,7 @@ void EventChannel_i::mainLoop()
     assert(events.empty());
 
     _poaManager->activate();
-    
+
     //
     // COMMUNICATION PHASE - talk with clients' suppliers & consumers.
     // Note: On Linux the resolution of nanosleep is a huge 10ms.
@@ -366,7 +367,7 @@ void EventChannel_i::createPoa(const char* channelName)
       {
         // Create a new POA (and new POAManager) for this channel.
         // The POAManager will be used for all of this channel's POAs.
-        if ( channelName ) 
+        if ( channelName )
           std::cout << "createPoa name:"  << channelName << std::endl;
         _poa=p->create_POA(channelName,POAManager::_nil(),policies);
         _poaManager=_poa->the_POAManager();
@@ -472,7 +473,7 @@ void EventChannelStore::empty()
   void EventChannelStore::list( omniEvents::EventChannelInfoList &clist  )
 {
 
-  DB(5,"EventChannel_i::list num channels:" << _channels.size() );     
+  DB(5,"EventChannel_i::list num channels:" << _channels.size() );
   clist.length(_channels.size());
   int i;
   omni_mutex_lock l(_lock);
@@ -482,7 +483,7 @@ void EventChannelStore::empty()
       ++iter, i++)
   {
     EventChannel_i *ech=*iter;
-    try { 
+    try {
       omniEvents::EventChannelInfo eci;
       std::string ename = ech->name();
       DB(5,"EventChannel_i::list i:" << i << " name:" << ename.c_str() );
@@ -506,7 +507,7 @@ void EventChannelStore::empty()
 
 
 
- 
+
 
 }; // end namespace OmniEvents
 

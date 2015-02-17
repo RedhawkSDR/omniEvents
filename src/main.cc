@@ -26,6 +26,7 @@
 //    channels can either use the factory by resolving its name with the
 //    naming service or create in-process channels.
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
@@ -103,7 +104,7 @@ int main(int argc, char** argv)
      switch (c)
      {
         case 'O': break; // Helps protect us from -ORB arguments.
-        
+
      // Initialisation options (only useful on first run)
         case 'a': endPointNoListen=optarg;
                   break;
@@ -139,7 +140,7 @@ int main(int argc, char** argv)
 
         case 'v': verbose=true;
                   break;
-        
+
         case 'V': cout<<OmniEvents::version()<<endl;
                   ::exit(0);
 
@@ -254,7 +255,7 @@ int main(int argc, char** argv)
     // Register factory with the Naming Service.
     omniEvents::EventChannelFactory_var factory( logfile.factory()->_this() );
     bindName2Object(
-      Orb::inst()._NameService.in(), 
+      Orb::inst()._NameService.in(),
       str2name(factoryName),
       factory.in()
     );

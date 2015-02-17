@@ -20,6 +20,7 @@
 #    License along with this library; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#    Modified by REDHAWK (United States Government) - 2015
 
 # Set up autoheader
 AH_BOTTOM([
@@ -28,7 +29,7 @@ AH_BOTTOM([
 ])
 
 # Process this file with autoconf to produce a configure script.
-AC_INIT(omniEvents,2.6.2,alex.omnievents@firetree.net)
+AC_INIT(omniEvents,2.7.0)
 AC_CONFIG_AUX_DIR(auto)
 AC_CONFIG_SRCDIR([src/omniEvents.cc])
 AC_CONFIG_HEADER([src/config.h])

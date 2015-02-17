@@ -20,6 +20,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #ifndef OMNIEVENTS__SUPPLIERADMIN_H
 #define OMNIEVENTS__SUPPLIERADMIN_H
@@ -67,7 +68,7 @@ public:
   /** Collects all events that have arrived since the last call. */
   void collect(list<CORBA::Any*>& events);
 
-  /** Send disconnect_XXX_supplier() to all connected consumers. */    
+  /** Send disconnect_XXX_supplier() to all connected consumers. */
   void disconnect();
 
   /** Populate this servant from log information. */

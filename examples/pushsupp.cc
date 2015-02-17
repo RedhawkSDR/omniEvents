@@ -23,7 +23,8 @@
 //
 // Description:
 //    Push Model supplier implementation.
-//	
+//
+//    Modified by REDHAWK (United States Government) - 2015
 
 /*
   $Log: pushsupp.cc,v $
@@ -359,7 +360,7 @@ int main (int argc, char** argv)
         }
      }
      cout << "Obtained ProxyPushConsumer." << endl;
-   
+
      //
      // Connect Push Supplier - retrying on Comms Failure.
      CosEventComm::PushSupplier_var sptr =CosEventComm::PushSupplier::_nil();
@@ -391,7 +392,7 @@ int main (int argc, char** argv)
         }
      }
      cout << "Connected Push Supplier." << endl;
-   
+
      // Push data.
      for (int i=0; (discnum == 0) || (i < discnum); i++)
      {
@@ -409,7 +410,7 @@ int main (int argc, char** argv)
            cout << "Failed. Caught COMM_FAILURE Exception!" << endl;
         }
      }
-   
+
      // Disconnect - retrying on Comms Failure.
      while (1)
      {

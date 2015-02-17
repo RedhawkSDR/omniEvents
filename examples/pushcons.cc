@@ -24,6 +24,7 @@
 // Description:
 //    Push Model consumer implementation
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 /*
   $Log: pushcons.cc,v $
@@ -389,7 +390,7 @@ main(int argc, char **argv)
         }
      }
      cout << "Obtained ProxyPushSupplier." << endl;
-   
+
      //
      // Connect Push Consumer - retrying on Comms Failure.
      while (1)
@@ -435,7 +436,7 @@ main(int argc, char **argv)
         }
      }
      cout << "Disconnected Push Consumer." << endl;
-   
+
      // Yawn
      cout << "Sleeping " << sleepInterval << " seconds." << endl;
      omni_thread::sleep(sleepInterval);

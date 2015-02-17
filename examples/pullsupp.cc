@@ -23,7 +23,8 @@
 //
 // Description:
 //    Pull Model supplier implementation.
-//	
+//
+//    Modified by REDHAWK (United States Government) - 2015
 
 /*
   $Log: pullsupp.cc,v $
@@ -388,7 +389,7 @@ main (int argc, char** argv)
         }
      }
      cout << "Obtained ProxyPullConsumer." << endl;
-   
+
      // Connect Pull Supplier - retrying on Comms Failure.
      CosEventComm::PullSupplier_var supplierRef =supplier->_this();
      while (1)

@@ -1,12 +1,12 @@
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
-Version: 2.6.2
-Release: 9
+Version: 2.7.0
+Release: 1%{?dist}
 License: LGPL
 Group:   System/Libraries
-Source0: %{name}-%{version}-src.tar.gz
+Source0: %{name}-%{version}.tar.gz
 URL:     http://www.omnievents.org/
-BuildRequires:  omniORB-devel glibc-devel
+BuildRequires:  omniORB-devel glibc-devel boost-devel
 Buildroot:      %{_tmppath}/%{name}-%{version}-root
 
 %define lib_name %{?mklibname:%mklibname %{name} 2}%{!?mklibname:lib%{name}2}
@@ -193,6 +193,9 @@ fi
 %doc doc/omnievents* doc/*.html doc/doxygen
 
 %changelog
+* Tue Feb 17 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.0-1
+- Update version, now supports REDHAWK additions
+
 * Tue Oct 28 2014 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.6.2-9
 - Don't fail if a reference to an object that is being disconnected becomes nil prematurely
 

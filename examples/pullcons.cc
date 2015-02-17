@@ -23,7 +23,8 @@
 //
 // Description:
 //    Pull Model consumer implementation.
-//	
+//
+//    Modified by REDHAWK (United States Government) - 2015
 
 /*
   $Log: pullcons.cc,v $
@@ -237,7 +238,7 @@ main(int argc, char **argv)
        PortableServer::POAManager_var pman =rootPoa->the_POAManager();
        pman->activate();
     }
-   
+
     //
     // Obtain object reference to EventChannel
     // (from command-line argument or from the Naming Service).
@@ -359,7 +360,7 @@ main(int argc, char **argv)
         }
      }
      cout << "Obtained ProxyPullSupplier." << endl;
-   
+
      //
      // Connect Pull Consumer - retrying on Comms Failure.
      CosEventComm::PullConsumer_ptr cptr =CosEventComm::PullConsumer::_nil();
@@ -378,13 +379,13 @@ main(int argc, char **argv)
            exit (1);
         }
         catch (CosEventChannelAdmin::AlreadyConnected& ex) {
-           cerr << "Proxy Pull Supplier already connected!" 
+           cerr << "Proxy Pull Supplier already connected!"
                 << endl;
            break;
         }
         catch (CORBA::COMM_FAILURE& ex) {
            cerr << "Caught COMM_FAILURE Exception "
-                << "connecting Pull Consumer! Retrying..." 
+                << "connecting Pull Consumer! Retrying..."
                 << endl;
            continue;
         }
@@ -488,7 +489,7 @@ main(int argc, char **argv)
         }
         catch (CORBA::COMM_FAILURE& ex) {
            cerr << "Caught COMM_FAILURE exception "
-                << "disconnecting Pull Consumer! Retrying..." 
+                << "disconnecting Pull Consumer! Retrying..."
                 << endl;
            continue;
         }

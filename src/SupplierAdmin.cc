@@ -20,6 +20,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #include "SupplierAdmin.h"
 
@@ -75,7 +76,7 @@ SupplierAdmin_i::SupplierAdmin_i(
   // Note: A SupplierAdmin_i is always created by the EventChannel to allow this
   // behaviour.
   _pushConsumer=new ProxyPushConsumer_i(_poa,_queue,_channel.consumerAdmin());
-  
+
   activateObjectWithId("SupplierAdmin");
 }
 

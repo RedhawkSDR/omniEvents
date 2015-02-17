@@ -20,6 +20,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #include "ProxyPushSupplier.h"
 #include "Orb.h"
@@ -109,7 +110,7 @@ ProxyPushSupplierManager::~ProxyPushSupplierManager()
 
 CosEventChannelAdmin::ProxyPushSupplier_ptr
 ProxyPushSupplierManager::createObject()
-{  
+{
   return createNarrowedReference<CosEventChannelAdmin::ProxyPushSupplier>(
            _managedPoa.in(),
            CosEventChannelAdmin::_tc_ProxyPushSupplier->id()
@@ -124,7 +125,7 @@ void ProxyPushSupplierManager::disconnect()
     ProxyPushSupplier_i* pps =static_cast<ProxyPushSupplier_i*>(p);
     // We are in the EventChannel's thread.
     // Make sure all calls go though the ProxyPushSupplier POA.
-    CosEventChannelAdmin::ProxyPushSupplier_var ppsv =pps->_this(); 
+    CosEventChannelAdmin::ProxyPushSupplier_var ppsv =pps->_this();
     ppsv->disconnect_push_supplier();
   }
 }

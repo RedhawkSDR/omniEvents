@@ -24,7 +24,8 @@
 // Description:
 //    Client to the event channel factory. Requests creation of an event
 //    channel and registers it with the Naming service.
-//	
+//
+//   Modified by REDHAWK (United States Government) - 2015
 
 /*
   $Log: eventc.cc,v $
@@ -216,7 +217,7 @@ main(int argc, char **argv)
      {
      case 'n':
        channelName=optarg;
-       needNameService=true;       
+       needNameService=true;
        break;
 
      case 'N':
@@ -353,7 +354,7 @@ main(int argc, char **argv)
             << channelName << "\"]" << endl;
        exit(1);
     }
-    
+
     // Print the new EventChannel's IOR to standard output.
     if(verbose)
     {
@@ -375,12 +376,12 @@ main(int argc, char **argv)
         rootContext->rebind(name,channel.in());
       }
     }
-    
+
     //
     // Clean up nicely.
     action="destroy orb";
     orb->destroy();
-    
+
     //
     // If we get here, then everything has worked OK.
     result=0;

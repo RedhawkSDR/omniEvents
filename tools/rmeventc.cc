@@ -22,7 +22,8 @@
 //
 // Description:
 //    Destroys the named EventChannel.
-//	
+//
+//    Modified by REDHAWK (United States Government) - 2015
 
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
@@ -97,7 +98,7 @@ main(int argc, char **argv)
   try
   {
     CORBA::Object_var obj;
-    
+
     //
     // Obtain object reference to EventChannel
     // (from command-line argument or from the Naming Service).
@@ -128,13 +129,13 @@ main(int argc, char **argv)
       action="unbind Event Channel from naming service";
       rootContext->unbind(ecName);
     }
-    
+
     action="narrow object reference to event channel";
     CosEventChannelAdmin::EventChannel_var channel =
       CosEventChannelAdmin::EventChannel::_narrow(obj);
     if(CORBA::is_nil(channel))
         throw CORBA::OBJECT_NOT_EXIST();
-    
+
     //
     // Destroy the EventChannel.
     action="destroy Event Channel";

@@ -23,7 +23,8 @@
 //
 // Description:
 //      Implementation of the COSS Event Services Event Channel Factory
-//	
+//
+//    Modified by REDHAWK (United States Government) - 2015
 
 #include "EventChannelFactory.h"
 
@@ -296,7 +297,7 @@ PersistNode* EventChannelFactory_i::parseCriteria(
       DB(10,"Ignoring unknown CosLifeCycle criterion: "<<criteria[i].name);
     }
   } // end loop for(i)
-  
+
   return result.release();
 }
 
@@ -334,7 +335,7 @@ EventChannelFactory_i::output(ostream &os)
 
 
 
-void 
+void
 EventChannelFactory_i::delete_all()
 {
   // request destroy operation against all managed event
@@ -357,8 +358,8 @@ EventChannelFactory_i::exists( const char *channel_name)
 }
 
 
-CosEventChannelAdmin::EventChannel_ptr 
-EventChannelFactory_i::get_channel( const char *channel_name) 
+CosEventChannelAdmin::EventChannel_ptr
+EventChannelFactory_i::get_channel( const char *channel_name)
 {
 
   using namespace PortableServer;
@@ -385,7 +386,7 @@ EventChannelFactory_i::get_channel( const char *channel_name)
 
 
 
-void 
+void
 EventChannelFactory_i::list_channels( const CORBA::ULong  how_many,
                                              omniEvents::EventChannelInfoList_out elist,
                                              omniEvents::EventChannelInfoIterator_out eiter)

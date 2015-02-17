@@ -21,6 +21,7 @@
 //    License along with this library; if not, write to the Free Software
 //    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//    Modified by REDHAWK (United States Government) - 2015
 
 #ifndef OMNIEVENTS_EVENTCHANNELFACTORY_H
 #define OMNIEVENTS_EVENTCHANNELFACTORY_H
@@ -65,10 +66,10 @@ public: // CORBA METHODS
     const CosLifeCycle::Key &k,
     const CosLifeCycle::Criteria &the_criteria
   );
-  
+
   /** 'ping' method inherited from FT::PullMonitorable. */
   CORBA::Boolean is_alive() { return 1; }
-  
+
   /** DO NOT USE. Only for OpenOrb compatibility. */
   CosEventChannelAdmin::EventChannel_ptr create_channel(
     const char* channel_name
@@ -78,7 +79,7 @@ public: // CORBA METHODS
   CosEventChannelAdmin::EventChannel_ptr join_channel(
     const char* channel_name
   );
-   
+
 
   /**
      EventChannelFactoryExt methods
@@ -100,7 +101,7 @@ public:
    * responsible for deleting the result.
    */
   PersistNode* parseCriteria(const CosLifeCycle::Criteria& criteria) const;
-  
+
   /** Utility function: constructs a Criteria that contains a single criterion.
    *  Used to generate Invalid Criteria exceptions.
    */
