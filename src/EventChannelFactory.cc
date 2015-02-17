@@ -32,6 +32,7 @@
 #include "PersistNode.h"
 #include "Iterator.h"
 #include <memory>
+#include <sstream>
 
 #ifdef HAVE_OMNIORB4
 #  define STR_MATCH(s1,s2) omni::strMatch((s1),(s2))
@@ -338,7 +339,9 @@ EventChannelFactory_i::delete_all()
 {
   // request destroy operation against all managed event
   // channels....
-  DB(5,"EventChannelFactory_i::delete_all() - Request to delete ALL CHANNELS :  "<< _channels.size() );
+  std::ostringstream os;
+  os << "EventChannelFactory_i::delete_all() - Request to delete ALL CHANNELS :  "<< _channels.size();
+  DB(5, os.str().c_str() );
   _channels.empty();
 
 }
@@ -388,7 +391,9 @@ EventChannelFactory_i::list_channels( const CORBA::ULong  how_many,
                                              omniEvents::EventChannelInfoIterator_out eiter)
 {
     uint64_t size = _channels.size();
-    DB(5,"EventChannelFactory::_list_channels - Listing all channels : " <<  size );
+    std::ostringstream os;
+    os << "EventChannelFactory::_list_channels - Listing all channels : " <<  size;
+    DB(5, os.str().c_str() );
 
     // create copy of entire table...
     omniEvents::EventChannelInfoList* all = new omniEvents::EventChannelInfoList(size);

@@ -155,7 +155,15 @@ main(int argc, char **argv)
         omniEvents::EventChannelInfo_var einfo;
         if ( !CORBA::is_nil( eiter ) ) {
           while ( eiter->next_one( einfo ) == true ) {
-            rootContext->unbind( str2name(einfo->channel_name) );
+            try {
+              rootContext->unbind( str2name(einfo->channel_name) );
+            } 
+            catch(CORBA::OBJECT_NOT_EXIST& ex) { // _narrow()
+              cerr<<"Failed to ubind: "<<einfo->channel_name<<". OBJECT_NOT_EXIST"<<endl;
+            }
+            catch(...) {
+              // pass ....
+            }
           }
         }
       }

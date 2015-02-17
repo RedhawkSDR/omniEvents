@@ -111,6 +111,7 @@ main(int argc, char **argv)
       rootContext=CosNaming::NamingContext::_narrow(obj);
       if(CORBA::is_nil(rootContext))
           throw CORBA::OBJECT_NOT_EXIST();
+      cerr<<"Resolved Naming service..." << std::endl;
     }
     catch (CORBA::Exception& ex) {
        if(needNameService)
@@ -146,9 +147,12 @@ main(int argc, char **argv)
       exit(1);
     }
 
+    cerr<<"Resolved EventChannelFactoryExt..." << std::endl;
+
     try {
         omniEvents::EventChannelInfoIterator_var eiter;
         omniEvents::EventChannelInfoList_var     elist;
+        cerr<<"Grabbing list of channels..." << std::endl;
         factory->list_channels(0, elist, eiter );
         omniEvents::EventChannelInfo_var einfo;
         if ( !CORBA::is_nil(eiter) ) {
