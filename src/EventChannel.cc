@@ -55,6 +55,12 @@ void EventChannel_i::destroy()
 
   // Prevent further incoming connections.
   _shutdownRequested=true;
+  
+  DB(5,"EventChannel_i::destroy check state poaMananger--> state:" << _poaManager->get_state() );
+  if (  _poaManager->get_state() ==  PortableServer::POAManager::HOLDING ) {
+    _poaManager->activate();
+    DB(5,"EventChannel_i::destroy  activate poaMananger--> state:" << _poaManager->get_state() );
+  }
 
   DB(5,"EventChannel_i::destroy()")
 
