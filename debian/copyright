@@ -1,0 +1,32 @@
+This package was debianised by W. Borgert <debacle@debian.org> on
+Sat, 2004-11-20 17:53:19 +0000.
+
+It was downloaded from http://omnievents.sourceforge.net/
+
+Upstream Authors: Alex Tingle <alextingle@users.sourceforge.net>
+                  Bjorn Rohde Jensen <shamus13@users.sourceforge.net>
+                  Paul Nader <naderp@users.sourceforge.net>
+
+Copyright: Copyright (C) 2003-2005 Alex Tingle
+           Copyright (C) 1998-1999 Paul Nader
+           Copyright (C) 1996-2000 AT&T Laboratories Cambridge
+
+License:
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+
+
+On Debian GNU/Linux systems, the complete text of the GNU Lesser General
+Public License can be found in `/usr/share/common-licenses/LGPL-2.1'.

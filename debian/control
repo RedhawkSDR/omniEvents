@@ -1,0 +1,63 @@
+Source: omnievents
+Section: net
+Priority: optional
+Maintainer: Debian CORBA Team <pkg-corba-devel@lists.alioth.debian.org>
+Uploaders: W. Borgert <debacle@debian.org>, Thomas Girard <thomas.g.girard@free.fr>
+Build-Depends: debhelper (>= 7), cdbs, libomniorb4-dev (>= 4.1.1), pkg-config, omniidl, libcos4-dev (>= 4.1.1), omniorb-idl, doxygen, graphviz, xsltproc, docbook-xsl, autotools-dev, libboost-dev, libboost-thread-dev
+Standards-Version: 3.9.2
+Homepage: http://www.omnievents.org
+Vcs-Svn: svn://svn.debian.org/svn/pkg-corba/trunk/omnievents
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-corba/trunk/omnievents
+
+Package: omnievents
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: omnievents-doc
+Description: omniORB event service
+ omniEvents enables CORBA applications to communicate through
+ asynchronous broadcast channels rather than direct method calls. It
+ is a small, efficient implementation of the Object Management Group's
+ Event Service specification designed to work with omniORB.
+ .
+ This package contains the CORBA Event Service daemon as a standalone
+ executable, and the associated tools.
+
+Package: libomnievents2
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: omniORB event service shared library
+ This package contains omniEvents shared library.
+ .
+ For more information on omniEvents see the omnievents package.
+
+Package: libomnievents-dev
+Architecture: any
+Section: libdevel
+Depends: libomnievents2 (= ${binary:Version}), ${misc:Depends}
+Recommends: pkg-config
+Suggests: omnievents-doc
+Description: omniORB event service development files
+ This package contains header files, static library and idl source files
+ for omniEvents.
+ .
+ For more information on omniEvents see the omnievents package.
+
+Package: omnievents-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Description: omniORB event service documentation
+ This package contains omniEvents manual and doxygen generated documentation.
+ .
+ For more information on omniEvents see the omnievents package.
+
+Package: libomnievents-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: libomnievents2 (= ${binary:Version}), ${misc:Depends}
+Description: omniORB event service debugging symbols
+ This package contains omniEvents debugging symbols.
+ .
+ For more information on omniEvents see the omnievents package.

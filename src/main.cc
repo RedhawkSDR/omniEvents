@@ -62,6 +62,7 @@ extern int optind;
 #  include <omniORB4/internal/orbOptions.h>
 #endif
 
+#include <cstdlib>
 #include <stdio.h> // for sprintf
 #include <stdlib.h>
 

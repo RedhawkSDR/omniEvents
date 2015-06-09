@@ -1,0 +1,124 @@
+omnievents (1:2.7.0-1ppa1) trusty; urgency=medium
+
+  * New upstream release.
+
+ -- REDHAWK (REDHAWK Release Key - redhawksdr.org) <ryan.bauman@axiosengineering.com>  Tue, 09 Jun 2015 07:56:40 -0400
+
+omnievents (1:2.6.2-2) unstable; urgency=low
+
+  [ Floris Bruynooghe ]
+  * Build-depend on new omniorb packages.
+
+  [ Thomas Girard ]
+  * Add watch file.
+  * Fix typo in omnievents package description. Thanks to Pascal De Vuyst
+    for the report. Closes: #557829.
+  * Acknowledge NMU patch for #541249. Thanks to Petter Reinholdtsen for the
+    patch. Closes: #547545.
+  * Acknowledge NMU patch for #504864. Thanks, David Paleino!
+  * Bump Standards-Version: to 3.8.3.
+  * Switch debhelper level to 7.
+  * Add ${misc:Depends} where appropriate.
+  * Bump Standards-Version: to 3.9.2.
+  * Integrate patch from Ubuntu, thanks Stefan Wehner. Addresses: LP#705020.
+  * Drop obsolete Conflicts:/Replaces:
+
+ -- Thomas Girard <thomas.g.girard@free.fr>  Mon, 02 May 2011 23:37:51 +0200
+
+omnievents (1:2.6.2-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix FTBFS with GCC 4.4, added missing #includes, thanks to Martin
+    Michlmayr (Closes: #504864)
+
+ -- David Paleino <dapal@debian.org>  Mon, 21 Dec 2009 17:05:30 +0100
+
+omnievents (1:2.6.2-1.1) unstable; urgency=low
+
+  * Non-maintainer upload to fix release goal.
+  * Correct init.d script header runlevel list and dependencies.  Add code
+    in postinst to recover systems affected by the bug (Closes: #541249).
+  * Correct section for libomnievents-dbg to 'debug', based on tip from
+    lintian.
+  * Add code to clean target of debian/rules to remove generated
+    config.log and config.status, based on tip from lintian.
+
+ -- Petter Reinholdtsen <pere@debian.org>  Sun, 20 Sep 2009 17:00:14 +0200
+
+omnievents (1:2.6.2-1) unstable; urgency=low
+
+  * Package taken over by the CORBA team.
+  * Add myself to the Uploaders: field, and move W. Martin Borgert here.
+  * New upstream release; bump the epoch.
+  * Rename libomnieventsc2a to libomnievents2, and handle the transition.
+  * New package, omnievents-doc, containing manual and doxygen documentation.
+  * Bump debhelper level to 5, and adapt dh_strip invocation accordingly.
+  * Bump Standards-Version: to 3.7.3.
+  * Fix a typo in debian/rules binary-post-install rule.
+  * Fix typos on package names in Conflicts: and Replaces: fields.
+  * Replace ${Source-Version} with ${binary:Version}.
+  * Remove ${shlibs:Depends} and ${misc:Depends} from libomnievents-dev
+    dependencies. Add libomnieventsc2a dependency.
+  * Build-depend on omniorb4 >= 4.1.1.
+  * Rework descriptions.
+  * Add autotools-dev build-dependency to have cdbs copy new config.* files.
+  * Remove useless libomniEvents.so.2.6 symlink.
+  * Change libomnievents-dbg Priority: to extra.
+  * Fix FTBFS with g++-4.3. Thanks to Martin Michlmayr for reporting this and
+    providing a patch. Closes: #417459.
+  * Remove bashism from debian/rules. Closes: #459168. Thanks to Lucas
+    Nussbaum for reporting this, and to W. Martin Borgert for providing a fix.
+  * Generate doxygen documentation in a different directory and invoke clean:
+    target rather than disclean: to fix FTBFS when built twice.
+    Closes: #424376. Thanks to Lucas Nussbaum for reporting this.
+
+ -- Thomas Girard <thomas.g.girard@free.fr>  Sun, 13 Jan 2008 12:39:25 +0000
+
+omnievents (2.6.2.pre2-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * C++ allocation transition (closes: #339236)
+
+ -- Bastian Blank <waldi@debian.org>  Sat, 31 Dec 2005 12:22:42 +0100
+
+omnievents (2.6.2.pre2-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * C++ ABI transition (closes: #332896).
+
+ -- Luk Claes <luk@debian.org>  Sun,  9 Oct 2005 12:58:02 +0200
+
+omnievents (2.6.2.pre2-1) unstable; urgency=medium
+
+  * New upstream pre-release (improved stability, less crashes,
+    fixed race, therefore urgency=medium for sarge).
+  * Documentation now build from source.
+  * Add debug library package, as requested by users.
+
+ -- W. Borgert <debacle@debian.org>  Sun,  1 May 2005 11:12:02 +0000
+
+omnievents (2.6.1-4) unstable; urgency=low
+
+  * Add build dependency on omniorb4-idl (closes: #285285).
+    I should use pbuilder.
+  * Fixed a lintian error and a lintian warning.
+
+ -- W. Borgert <debacle@debian.org>  Mon, 13 Dec 2004 19:23:58 +0000
+
+omnievents (2.6.1-3) unstable; urgency=low
+
+  * Add build dependency on omniidl4 (closes: #284950).
+
+ -- W. Borgert <debacle@debian.org>  Fri, 10 Dec 2004 09:26:01 +0000
+
+omnievents (2.6.1-2) unstable; urgency=low
+
+  * Bug fix: Use upstream init and defaults file.
+
+ -- W. Borgert <debacle@debian.org>  Sat, 27 Nov 2004 15:57:32 +0000
+
+omnievents (2.6.1-1) unstable; urgency=low
+
+  * Initial Release (closes: #268813).
+
+ -- W. Borgert <debacle@debian.org>  Sat, 20 Nov 2004 17:53:19 +0000

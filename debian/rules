@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+
+DEB_FIXPERMS_EXCLUDE=omniEvents.pc
+DEB_INSTALL_DOCS_omnievents-doc=doc/omnievents.docbook.css doc/*.html dox/doc/doxygen
+DEB_INSTALL_MANPAGES_omnievents=doc/man/omniEvents.8 doc/man/*.1
+DEB_DH_INSTALLINIT_ARGS="--name=omniorb-eventservice"
+DEB_UPDATE_RCD_PARAMS_omnievents="defaults 90 10"
+DOCBOOK=/usr/share/xml/docbook/stylesheet/nwalsh
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+DEB_MAKE_CLEAN_TARGET = clean
+
+DEB_CONFIGURE_EXTRA_FLAGS := --enable-unloadable-stubs
+DEB_DH_MAKESHLIBS_ARGS := -V
+DEB_DH_STRIP_ARGS := --dbg-package=libomnievents-dbg
+
+build/omnievents-doc::
+	mkdir -p $(CURDIR)/dox/doc/doxygen
+	$(MAKE) -f meta.mk doc DOCBOOK=$(DOCBOOK)
+
+build/omnievents::
+	$(MAKE) -C src oelite
+	cp etc/default/omniorb-eventservice \
+	    $(CURDIR)/debian/omnievents.omniorb-eventservice.default
+	cp etc/init.d/omniorb-eventservice \
+	    $(CURDIR)/debian/omnievents.omniorb-eventservice.init
+
+binary-post-install/omnievents::
+	cp -f src/oelite $(CURDIR)/debian/omnievents/usr/sbin/omniEvents
+
+binary-post-install/libomnievents2::
+	cd $(CURDIR)/debian/libomnievents2/usr/lib/ && \
+	    rm -f libomniEvents.so.2.7 && \
+	    ln -sf libomniEvents.so.2.7.0 libomniEvents.so.2
+
+binary-post-install/libomnievents-dev::
+	rm -f $(CURDIR)/debian/libomnievents-dev/usr/include/*.h
+	rm -f $(CURDIR)/debian/libomnievents-dev/usr/include/*.hh
+	chmod 644 $(CURDIR)/debian/libomnievents-dev/usr/lib/pkgconfig/*.pc
+
+clean::
+	rm -Rf $(CURDIR)/dox

@@ -1,0 +1,5 @@
+# Watch file for omnievents, see uscan(1) for details.
+
+version=3
+
+opts="uversionmangle=s/_/./g" http://www.omnievents.org/download/omniEvents-([\d_]+)-src\.tar\.gz
