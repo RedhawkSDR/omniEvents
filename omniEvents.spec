@@ -1,18 +1,15 @@
-%define _name omniEvents
-%define srcversion 2_6_2
-
-%define lib_name %{?mklibname:%mklibname %{_name} 2}%{!?mklibname:lib%{_name}2}
-
 Summary: CORBA Event Service for omniORB
-Name:    %{_name}
+Name:    omniEvents
 Version: 2.6.2
-Release: 1
+Release: 9
 License: LGPL
 Group:   System/Libraries
-Source0: %{_name}-%{srcversion}-src.tar.gz
+Source0: %{name}-%{version}-src.tar.gz
 URL:     http://www.omnievents.org/
-BuildRequires:  libomniorb-devel glibc-devel
+BuildRequires:  omniORB-devel glibc-devel
 Buildroot:      %{_tmppath}/%{name}-%{version}-root
+
+%define lib_name %{?mklibname:%mklibname %{name} 2}%{!?mklibname:lib%{name}2}
 
 %description
 %{name} enables CORBA applications to communicate through asynchronous
@@ -25,7 +22,6 @@ Summary: CORBA Event Service for omniORB
 Group:   System/Libraries
 Prereq:  /sbin/ldconfig
 Provides:       libomnievents = %{version}-%{release} %{name} = %{version}-%{release}
-Obsoletes:      omniEvents
 
 %description -n %{lib_name}
 %{name} enables CORBA applications to communicate through asynchronous
@@ -36,7 +32,7 @@ Event Service specification designed to work with omniORB.
 %package server
 Summary:   CORBA Event Service daemon
 Group:     Development/C++
-Obsoletes: omniEvents-server
+Prereq: omniORB-servers
 Requires: %{lib_name} = %{version}-%{release}
 
 %description server
@@ -50,8 +46,9 @@ Prereq:         /sbin/insserv
 %else
 Prereq:         /sbin/service /sbin/chkconfig
 %endif
-Obsoletes: omniEvents-bootscripts
+Prereq:    lsb >= 4.0
 Requires:  %{name}-server = %{version}-%{release} %{name}-utils = %{version}-%{release}
+Requires:  omniORB-utils
 
 %description bootscripts
 Automatic starting of the %{name} CORBA Event Service.
@@ -59,7 +56,6 @@ Automatic starting of the %{name} CORBA Event Service.
 %package utils
 Summary:   Utility programs
 Group:     Development/C++
-Obsoletes: omniEvents-utils
 Requires:  %{lib_name} = %{version}-%{release}
 
 %description utils
@@ -69,7 +65,6 @@ Requires:  %{lib_name} = %{version}-%{release}
 Summary: Header files and libraries needed for %{name} development
 Group:          Development/C++
 Requires:       %{lib_name} = %{version}-%{release}
-Obsoletes:      omniEvents-devel
 Provides:       libomnievents-devel = %{version}-%{release} %{name}-devel = %{version}-%{release}
 Conflicts:      libomnievents-devel > %{version}-%{release} libomnievents-devel < %{version}-%{release}
 
@@ -79,14 +74,12 @@ The header files and libraries needed for developing programs using %{name}.
 %package doc
 Summary: Documentation and examples for %{name}
 Group:          Development/C++
-Obsoletes:      omniEvents-doc
-#Requires:       %{lib_name} = %{version}-%{release}
 
 %description doc
 Developer documentation and examples.
 
 %prep
-%setup -n %{_name}-%{srcversion}
+%setup -n %{name}-%{version}
 
 %{?configure:%configure}%{!?configure:CPPFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} --libdir=%{_libdir}} --enable-unloadable-stubs
 
@@ -140,10 +133,10 @@ fi
 %post bootscripts
 %if "%{_vendor}" == "suse"
 /sbin/insserv omniEvents
-%{_sbindir}/rcomniEvents restart >/dev/null 2>&1
+%{_sbindir}/rcomniEvents condrestart >/dev/null 2>&1
 %else
 /sbin/chkconfig --add omniEvents
-/sbin/service omniEvents restart >/dev/null 2>&1
+/sbin/service omniEvents condrestart >/dev/null 2>&1
 %endif
 
 %preun bootscripts
@@ -171,7 +164,7 @@ fi
 
 %files server
 %defattr (-,root,root)
-%dir %attr(700,omni,omni) %{_localstatedir}/omniEvents
+%dir %attr(700,omniORB,omniORB) %{_localstatedir}/omniEvents
 %attr(755,root,root) %{_sbindir}/omniEvents
 %attr(644,root,man) %{_mandir}/man8/*
 
@@ -200,6 +193,18 @@ fi
 %doc doc/omnievents* doc/*.html doc/doxygen
 
 %changelog
+* Tue Oct 28 2014 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.6.2-9
+- Don't fail if a reference to an object that is being disconnected becomes nil prematurely
+
+* Mon Feb 10 2014 Daniel Wille <daniel.wille@axiosengineering.com> 2.6.2-8
+- Use LSB logging functions in init.d script
+- Use killproc in init.d to ensure omniEvents gets a SIGKILL if it won't stop
+
+* Mon Dec 16 2013 Daniel Wille <daniel.wille@axiosengineering.com> 2.6.2-7
+- Add check for omniNames reachability before starting omniEvents in service
+  script.
+- Remove the obsoletes
+
 * Wed Apr 27 2005 Dirk Siebnich <dok@dok-net.net>  2.6.2-1
 - better support for x86_64
 
