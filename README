@@ -1,6 +1,8 @@
 omniEvents
 ----------
 
+This is a fork of the omniEvents software version 2.6.2 (http://www.omnievents.org/).
+
 Information on installing, building and using omniEvents, an implementation of
 the OMG Event Service Specification v1.1 for omniORB3 and omniORB4.
 
