@@ -4,9 +4,12 @@ After=omniNames.service
 Requires=omniNames.service
 
 [Service]
-Type=simple
-ExecStartPre=/bin/mkdir -p /var/log/omniEvents
-ExecStart=/usr/sbin/omniEvents
+Type=forking
+PIDFile=/var/run/omniEvents.pid
+Environment=LOGDIR=/var/lib/omniEvents
+Environment=PORT=11169
+ExecStartPre=/bin/mkdir -p $LOGDIR
+ExecStart=/usr/sbin/omniEvents -l $LOGDIR -p $PORT -P /var/run/omniEvents.pid
 User=root
 Group=root
 
