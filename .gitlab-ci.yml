@@ -1,0 +1,20 @@
+.build_template: &build_definition
+  stage: build
+  script:
+    - cp omniEvents.service /root/rpmbuild/SOURCES/
+    - tar --transform 's,^,omniEvents-2.7.0/,S' -czf /root/rpmbuild/SOURCES/omniEvents-2.7.0.tar.gz *
+    - yum-builddep -y omniEvents.spec
+    - rpmbuild -bb omniEvents.spec
+    - mkdir -p output
+    - cp -r /root/rpmbuild/RPMS/x86_64/*.rpm output/
+  artifacts:
+    paths:
+      - output/*.rpm
+
+build:el6:
+  image: redhawkci/rpmbuild:el6
+  <<: *build_definition
+
+build:el7:
+  image: redhawkci/rpmbuild:el7
+  <<: *build_definition
