@@ -1,0 +1,14 @@
+[Unit]
+Description=OmniEvents Service
+After=omniNames.service
+Requires=omniNames.service
+
+[Service]
+Type=simple
+ExecStartPre=/bin/mkdir -p /var/log/omniEvents
+ExecStart=/usr/sbin/omniEvents
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

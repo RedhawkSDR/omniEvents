@@ -1,3 +1,7 @@
+%if 0%{?fedora} > 14 || 0%{?rhel} > 6
+%global with_systemd 1
+%endif
+
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
 Version: 2.7.0
@@ -5,9 +9,16 @@ Release: 1%{?dist}
 License: LGPL
 Group:   System/Libraries
 Source0: %{name}-%{version}.tar.gz
+Source1: omniEvents.service
 URL:     http://www.omnievents.org/
-BuildRequires:  omniORB-devel glibc-devel boost-devel
 Buildroot:      %{_tmppath}/%{name}-%{version}-root
+BuildRequires:  omniORB-devel glibc-devel boost-devel
+%if 0%{?with_systemd}
+BuildRequires: systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+%endif
 
 %define lib_name %{?mklibname:%mklibname %{name} 2}%{!?mklibname:lib%{name}2}
 
@@ -41,11 +52,8 @@ The CORBA Event Service daemon as a standalone executable.
 %package bootscripts
 Summary:   Utility programs
 Group:     Development/C++
-%if "%{_vendor}" == "suse"
-Prereq:         /sbin/insserv
-%else
+
 Prereq:         /sbin/service /sbin/chkconfig
-%endif
 Prereq:    lsb >= 4.0
 Requires:  %{name}-server = %{version}-%{release} %{name}-utils = %{version}-%{release}
 Requires:  omniORB-utils
@@ -91,26 +99,30 @@ Developer documentation and examples.
 [ -z %{buildroot} ] || rm -rf %{buildroot}
 
 install -d %{buildroot}%{_sbindir}
+%if 0%{?with_systemd}
+%else
 install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{_sysconfdir}/default
+%endif
 install -d %{buildroot}%{_mandir}/{man1,man8}
 install -d -m 700 %{buildroot}%{_localstatedir}/omniEvents
 
 %{?makeinstall_std:%makeinstall_std}%{!?makeinstall_std:make DESTDIR=%{buildroot} install}
 
 install -m 755 src/oelite %{buildroot}%{_sbindir}/omniEvents
+%if 0%{?with_systemd}
+# install systemd unit
+mkdir -p %{buildroot}%{_unitdir}
+install -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}
+%else
 install -m 775 etc/init.d/omniorb-eventservice %{buildroot}%{_initrddir}/omniEvents
 install -m 644 etc/default/omniorb-eventservice %{buildroot}%{_sysconfdir}/default
+%endif
 install -m 644 doc/man/*.1 %{buildroot}%{_mandir}/man1
 install -m 644 doc/man/omniEvents.8 %{buildroot}%{_mandir}/man8
 
 # deprecated, but still installed by make install in 2.6.1
 rm -f %{buildroot}%{_includedir}/*.{h,hh}
-
-%if "%{_vendor}" == "suse"
-  # Most SUSE service scripts have a corresponding link into /usr/sbin
-  ln -sf %{_initrddir}/omniEvents %{buildroot}%{_sbindir}/rcomniEvents
-%endif
 
 %clean
 [ -z %{buildroot} ] || rm -rf %{buildroot}
@@ -120,36 +132,34 @@ rm -f %{buildroot}%{_includedir}/*.{h,hh}
 %post -n %{lib_name}
 /sbin/ldconfig
 
+%if 0%{?with_systemd}
+%post bootscripts
+%systemd_post omniEvents.service
+
+%preun bootscripts
+%systemd_preun omniEvents.service
+
+%postun bootscripts
+%systemd_postun omniEvents.service
+
+%else
 %pre bootscripts
 # A previous version is already installed?
 if [ $1 -ge 2 ]; then
-%if "%{_vendor}" == "suse"
-  %{_sbindir}/rcomniEvents stop >/dev/null 2>&1
-%else
   /sbin/service omniEvents stop >/dev/null 2>&1
-%endif
 fi
 
 %post bootscripts
-%if "%{_vendor}" == "suse"
-/sbin/insserv omniEvents
-%{_sbindir}/rcomniEvents condrestart >/dev/null 2>&1
-%else
 /sbin/chkconfig --add omniEvents
 /sbin/service omniEvents condrestart >/dev/null 2>&1
-%endif
 
 %preun bootscripts
 # Are we removing the package completely?
 if [ $1 -eq 0 ]; then
-%if "%{_vendor}" == "suse"
-  %{_sbindir}/rcomniEvents stop >/dev/null 2>&1
-  /sbin/insserv -r omniEvents
-%else
   /sbin/service omniEvents stop >/dev/null 2>&1
   /sbin/chkconfig --del omniEvents
-%endif
 fi
+%endif
 
 %postun -n %{lib_name}
 /sbin/ldconfig
@@ -158,7 +168,11 @@ fi
 %files -n %{lib_name}
 %defattr (-,root,root)
 %doc LICENSE
+
+%if 0%{?with_systemd}
+%else
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/default/*
+%endif
 %{_libdir}/*.so.*
 %{_datadir}/idl/omniEvents
 
@@ -170,9 +184,10 @@ fi
 
 %files bootscripts
 %defattr (-,root,root)
+%if 0%{?with_systemd}
+%{_unitdir}/omniEvents.service
+%else
 %config(noreplace) %attr(775,root,root) %{_initrddir}/*
-%if "%{_vendor}" == "suse"
-%{_sbindir}/rcomniEvents
 %endif
 
 %files utils
@@ -193,6 +208,9 @@ fi
 %doc doc/omnievents* doc/*.html doc/doxygen
 
 %changelog
+* Tue Apr 28 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.0-1
+- Added systemd support
+
 * Tue Feb 17 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.0-1
 - Update version, now supports REDHAWK additions
 
