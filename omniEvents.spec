@@ -14,10 +14,8 @@ URL:     http://www.omnievents.org/
 Buildroot:      %{_tmppath}/%{name}-%{version}-root
 BuildRequires:  omniORB-devel glibc-devel boost-devel
 %if 0%{?with_systemd}
+%{?systemd_requires}
 BuildRequires: systemd
-Requires(post): systemd
-Requires(preun): systemd
-Requires(postun): systemd
 %endif
 
 %define lib_name %{?mklibname:%mklibname %{name} 2}%{!?mklibname:lib%{name}2}
