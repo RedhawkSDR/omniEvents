@@ -317,14 +317,25 @@ inline void ProxyPushSupplier_i::trigger(bool& busy, bool& waiting)
 {
   if(!CORBA::is_nil(_req) && _req->poll_response()) // response has arrived
   {
-    CORBA::Environment_ptr env=_req->env(); // No need to free environment.
-    if(!CORBA::is_nil(env) && env->exception())
+    // With omniORB 4.2, fetching the environment throws an exception where 4.1
+    // would not. To unify the handling of exceptions, the checking is done in
+    // a try/catch, and if the environment does have an exception, it is raised
+    // so that it's handled by the same catch clause.
+    try
+    {
+      CORBA::Environment_ptr env=_req->env(); // No need to free environment.
+      if(!CORBA::is_nil(env) && env->exception())
+      {
+        CORBA::Exception* ex =env->exception(); // No need to free exception.
+        ex->_raise();
+      }
+    }
+    catch(CORBA::Exception& ex)
     {
       // Shut down the connection
-      CORBA::Exception* ex =env->exception(); // No need to free exception.
-      DB(10,"ProxyPushSupplier got exception" IF_OMNIORB4(": "<<ex->_name()) );
+      DB(10,"ProxyPushSupplier got exception" IF_OMNIORB4(": "<<ex._name()) );
       if (!CORBA::is_nil(_target)) {
-        Orb::inst().reportObjectFailure(HERE,_target.in(),ex);
+        Orb::inst().reportObjectFailure(HERE,_target.in(),&ex);
         _req=CORBA::Request::_nil();
 
         // Try to notify the Consumer that the connection is closing.

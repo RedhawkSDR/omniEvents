@@ -138,24 +138,36 @@ void Orb::run()
         curr=next++;
         if(curr->first->poll_response())
         {
-          CORBA::Environment_ptr env=curr->first->env();// No need to release.
-          if(!CORBA::is_nil(env) && env->exception())
+          // With omniORB 4.2, fetching the environment throws an exception
+          // where 4.1 would not. To unify the handling of exceptions, the
+          // entire operation is done in a try/catch, and if the environment
+          // does have an exception, it is raised so that it's handled by the
+          // same catch clause.
+          try
           {
-            CORBA::Exception* ex =env->exception(); // No need to free exception
-            DB(10,"Deferred call to "<<curr->first->operation()
-              <<"() got exception" IF_OMNIORB4(<<": "<<ex->_name()))
-          }
-          else if(curr->second)
-          {
-            DB(15,"Deferred call to "<<curr->first->operation()<<"() returned.")
-            try {
-                curr->second->callback(curr->first);
-            } catch (...) {
+            CORBA::Environment_ptr env=curr->first->env();// No need to release.
+            if(!CORBA::is_nil(env) && env->exception())
+            {
+              CORBA::Exception* ex =env->exception(); // No need to free exception
+              ex->_raise();
+            }
+            else if(curr->second)
+            {
+              DB(15,"Deferred call to "<<curr->first->operation()<<"() returned.")
+              try {
+                  curr->second->callback(curr->first);
+              } catch (...) {
+              }
+            }
+            else
+            {
+              DB(15,"Orphan call to "<<curr->first->operation()<<"() returned.")
             }
           }
-          else
+          catch(CORBA::Exception& ex)
           {
-            DB(15,"Orphan call to "<<curr->first->operation()<<"() returned.")
+            DB(10,"Deferred call to "<<curr->first->operation()
+               <<"() got exception" IF_OMNIORB4(<<": "<<ex._name()))
           }
           CORBA::release(curr->first);
           if(curr->second)
