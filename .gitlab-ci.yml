@@ -2,7 +2,7 @@
   stage: build
   script:
     - cp omniEvents.service /root/rpmbuild/SOURCES/
-    - tar --transform 's,^,omniEvents-2.7.0/,S' -czf /root/rpmbuild/SOURCES/omniEvents-2.7.0.tar.gz *
+    - tar --transform 's,^,omniEvents-2.7.1/,S' -czf /root/rpmbuild/SOURCES/omniEvents-2.7.1.tar.gz *
     - yum-builddep -y omniEvents.spec
     - rpmbuild -bb omniEvents.spec
     - mkdir -p output

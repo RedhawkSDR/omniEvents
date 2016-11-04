@@ -4,8 +4,8 @@
 
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
-Version: 2.7.0
-Release: 2%{?dist}
+Version: 2.7.1
+Release: 1%{?dist}
 License: LGPL
 Group:   System/Libraries
 Source0: %{name}-%{version}.tar.gz
@@ -206,10 +206,10 @@ fi
 %doc doc/omnievents* doc/*.html doc/doxygen
 
 %changelog
-* Tue Apr 28 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.0-1
+* Tue Apr 28 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.1-1
 - Added systemd support
 
-* Tue Feb 17 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.0-1
+* Tue Feb 17 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.1-1
 - Update version, now supports REDHAWK additions
 
 * Tue Oct 28 2014 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.6.2-9
