@@ -5,7 +5,7 @@
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
 Version: 2.7.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPL
 Group:   System/Libraries
 Source0: %{name}-%{version}.tar.gz
@@ -103,7 +103,7 @@ install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{_sysconfdir}/default
 %endif
 install -d %{buildroot}%{_mandir}/{man1,man8}
-install -d -m 700 %{buildroot}%{_localstatedir}/omniEvents
+install -d -m 755 %{buildroot}%{_sharedstatedir}/omniEvents
 
 %{?makeinstall_std:%makeinstall_std}%{!?makeinstall_std:make DESTDIR=%{buildroot} install}
 
@@ -176,7 +176,7 @@ fi
 
 %files server
 %defattr (-,root,root)
-%dir %attr(700,omniORB,omniORB) %{_localstatedir}/omniEvents
+%dir %attr(755,root,root) %{_sharedstatedir}/omniEvents
 %attr(755,root,root) %{_sbindir}/omniEvents
 %attr(644,root,man) %{_mandir}/man8/*
 
@@ -206,6 +206,9 @@ fi
 %doc doc/omnievents* doc/*.html doc/doxygen
 
 %changelog
+* Tue Jan 10 2017 Ryan Bauman <rbauman@lgsinnovations.com> - 2.7.1-2
+- Change directory ownership to match what initscript actually uses
+
 * Tue Apr 28 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.1-1
 - Added systemd support
 

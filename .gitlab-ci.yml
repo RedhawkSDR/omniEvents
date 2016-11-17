@@ -15,6 +15,17 @@ build:el6:
   image: redhawkci/rpmbuild:el6
   <<: *build_definition
 
-build:el7:
-  image: redhawkci/rpmbuild:el7
-  <<: *build_definition
+#build:el7:
+#  image: redhawkci/rpmbuild:el7
+#  <<: *build_definition
+
+test:install:el6:
+  image: centos:6
+  stage: test
+  script:
+    - yum install -y epel-release
+    - yum install -y output/*.rpm
+    - service omniNames start
+    - service omniEvents start
+    - service omniEvents stop
+    - ls -l /var/lib/omniEvents
