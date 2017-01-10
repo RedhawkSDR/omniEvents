@@ -29,8 +29,8 @@ Event Service specification designed to work with omniORB.
 %package -n %{lib_name}
 Summary: CORBA Event Service for omniORB
 Group:   System/Libraries
-Prereq:  /sbin/ldconfig
-Provides:       libomnievents = %{version}-%{release} %{name} = %{version}-%{release}
+Requires:  /sbin/ldconfig
+Provides:  libomnievents = %{version}-%{release} %{name} = %{version}-%{release}
 
 %description -n %{lib_name}
 %{name} enables CORBA applications to communicate through asynchronous
@@ -41,7 +41,7 @@ Event Service specification designed to work with omniORB.
 %package server
 Summary:   CORBA Event Service daemon
 Group:     Development/C++
-Prereq: omniORB-servers
+Requires:  omniORB-servers
 Requires: %{lib_name} = %{version}-%{release}
 
 %description server
@@ -51,10 +51,11 @@ The CORBA Event Service daemon as a standalone executable.
 Summary:   Utility programs
 Group:     Development/C++
 
-Prereq:         /sbin/service /sbin/chkconfig
-Prereq:    lsb >= 4.0
-Requires:  %{name}-server = %{version}-%{release} %{name}-utils = %{version}-%{release}
-Requires:  omniORB-utils
+Requires:       /sbin/service /sbin/chkconfig
+Requires(pre):  /sbin/service
+Requires:       redhat-lsb-core >= 4.0
+Requires:       %{name}-server = %{version}-%{release} %{name}-utils = %{version}-%{release}
+Requires:       omniORB-utils
 
 %description bootscripts
 Automatic starting of the %{name} CORBA Event Service.
@@ -208,6 +209,8 @@ fi
 %changelog
 * Tue Jan 10 2017 Ryan Bauman <rbauman@lgsinnovations.com> - 2.7.1-2
 - Change directory ownership to match what initscript actually uses
+- Use Requires instead of deprecated Prereq
+- Change dependency from lsb to redhat-lsb-core
 
 * Tue Apr 28 2015 Ryan Bauman <ryan.bauman@axiosengineering.com> 2.7.1-1
 - Added systemd support
