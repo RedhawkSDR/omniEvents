@@ -1,31 +1,52 @@
-.build_template: &build_definition
+.package: &package
+  image: ${docker_registry}utils/docker:latest-rpm
   stage: build
+  tags:
+    - dind
   script:
-    - cp omniEvents.service /root/rpmbuild/SOURCES/
-    - tar --transform 's,^,omniEvents-2.7.1/,S' -czf /root/rpmbuild/SOURCES/omniEvents-2.7.1.tar.gz *
-    - yum-builddep -y omniEvents.spec
-    - rpmbuild -bb omniEvents.spec
-    - mkdir -p output
-    - cp -r /root/rpmbuild/RPMS/x86_64/*.rpm output/
+    - docker pull ${docker_registry}rpmbuild:$dist-$arch-onbuild
+    - printf "FROM ${docker_registry}rpmbuild:$dist-$arch-onbuild" > Dockerfile
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+        rpm_release="0.$CI_PIPELINE_ID";
+      else
+        rpm_release=`rpm --query --queryformat "%{release}\n" --specfile ${namespace}$CI_PROJECT_NAME.spec | head -n 1 | awk -F"." "{print $1}"`;
+      fi
+    - name=$(echo $CI_PROJECT_NAME| tr '[:upper:]' '[:lower:]')
+    - docker build -t $name:latest-$dist-$arch --build-arg "project=omniEvents"
+                                               --build-arg "rpm_release=$rpm_release"
+                                               --build-arg "spec_file=omniEvents.spec"
+                                               --build-arg "arch=$arch" .
+    - id=$(docker create $name:latest-$dist-$arch)
+    - docker cp $id:/root/rpmbuild/RPMS/ output/
+    - docker rm -f $id
   artifacts:
     paths:
-      - output/*.rpm
+      - output/*/*.rpm
+    expire_in: 2 days
 
-build:el6:
-  image: redhawkci/rpmbuild:el6
-  <<: *build_definition
+package:el6:
+  variables:
+    dist: el6
+    arch: x86_64
+  <<: *package
 
-#build:el7:
-#  image: redhawkci/rpmbuild:el7
-#  <<: *build_definition
+package:el6-i386:
+  variables:
+    dist: el6
+    arch: i686
+  <<: *package
 
-test:install:el6:
-  image: centos:6
-  stage: test
+package:el7:
+  variables:
+    dist: el7
+    arch: x86_64
+  <<: *package
+
+deploy:
+  image: centos:7
+  stage: deploy
+  dependencies: []
   script:
-    - yum install -y epel-release
-    - yum install -y output/*.rpm
-    - service omniNames start
-    - service omniEvents start
-    - service omniEvents stop
-    - ls -l /var/lib/omniEvents
+    - if [ -n "$jenkins_url" ]; then
+        curl --insecure -X POST $jenkins_url/job/$CI_PROJECT_NAMESPACE/job/omniEvents-$CI_COMMIT_REF_NAME/buildWithParameters?pipeline_id=$CI_PIPELINE_ID --user $jenkins_user:$jenkins_api_token;
+      fi
