@@ -42,6 +42,8 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=@prefix@/sbin/omniEvents
 NAME=omniEvents
 DESC="CORBA event service"
+CHECK=10
+CHECK_DELAY=1
 
 test -f $DAEMON || exit 5
 
@@ -59,15 +61,31 @@ test -f $CONFIGFILE && . $CONFIGFILE
 test -n "$OMNIEVENTS_ALTERNATE" && OPT_ALTERNATE="-a $OMNIEVENTS_ALTERNATE"
 test -n "$OMNIEVENTS_NS_NAME"   && OPT_NS_NAME="-N $OMNIEVENTS_NS_NAME"
 
+_check_nameservice() {
+  onames=1
+  for (( i=0; i <= $1; i++ )) ;
+  do
+     # Make sure the naming service is available
+     if /usr/bin/nameclt list > /dev/null 2>&1 ;
+     then
+        onames=0
+        break  	
+     else
+       sleep $2
+     fi
+  done
+     
+  if [ $onames -ne 0 ];
+  then
+   log_failure_msg "omniEvents cannot reach the naming service"
+   exit 1
+  fi
+}
+
 startOE() {
   local RC
 
-  # Make sure the naming service is available
-  /usr/bin/nameclt list > /dev/null 2>&1
-  if [ $? -ne 0 ]; then
-    log_failure_msg "omniEvents cannot reach the naming service"
-    exit 1
-  fi
+   _check_nameservice $CHECK $CHECK_DELAY 
 
   test -d $OMNIEVENTS_LOGDIR || mkdir -p $OMNIEVENTS_LOGDIR
   $DAEMON $OMNIEVENTS_OPTIONS -P $OMNIEVENTS_PIDFILE -l $OMNIEVENTS_LOGDIR \
