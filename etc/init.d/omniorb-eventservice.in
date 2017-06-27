@@ -34,6 +34,7 @@
 
 # Source function library.
 . /lib/lsb/init-functions
+. /etc/rc.d/init.d/functions
 
 # You might want to tweak the location of the configuration file:
 CONFIGFILE=@SYSCONFIG_DIR@/omniorb-eventservice
@@ -53,6 +54,9 @@ test -f $DAEMON || exit 5
 test -z "$OMNIEVENTS_LOGDIR"  && OMNIEVENTS_LOGDIR=/var/lib/omniEvents
 test -z "$OMNIEVENTS_PORT"    && OMNIEVENTS_PORT=11169
 OMNIEVENTS_PIDFILE=/var/run/$NAME.pid
+
+test ! -f $OMNIEVENTS_PIDFILE && touch $OMNIEVENTS_PIDFILE
+test -f $OMNIEVENTS_PIDFILE && chown omniORB $OMNIEVENTS_PIDFILE
 
 # Load default preferences
 test -f $CONFIGFILE && . $CONFIGFILE
@@ -88,8 +92,9 @@ startOE() {
    _check_nameservice $CHECK $CHECK_DELAY 
 
   test -d $OMNIEVENTS_LOGDIR || mkdir -p $OMNIEVENTS_LOGDIR
-  $DAEMON $OMNIEVENTS_OPTIONS -P $OMNIEVENTS_PIDFILE -l $OMNIEVENTS_LOGDIR \
-    -p $OMNIEVENTS_PORT $OPT_ALTERNATE $OPT_NS_NAME > /dev/null 2>&1
+  test -d $OMNIEVENTS_LOGDIR && chown omniORB $OMNIEVENTS_LOGDIR
+  options="$OMNIEVENTS_OPTIONS -P $OMNIEVENTS_PIDFILE -l $OMNIEVENTS_LOGDIR  -p $OMNIEVENTS_PORT $OPT_ALTERNATE $OPT_NS_NAME "
+  daemon --user omniORB --pidfile $OMNIEVENTS_PIDFILE $DAEMON  "$options  2>&1 &"
   RC=$?
   [ "$RC" -ne 0 ] && log_failure_msg $"Starting $NAME" || log_success_msg $"Starting $NAME"
   return $RC
