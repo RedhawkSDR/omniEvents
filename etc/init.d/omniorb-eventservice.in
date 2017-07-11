@@ -51,7 +51,7 @@ test -f $DAEMON || exit 5
 #
 # Default parameters. Don't change these here. Change them by setting them in
 # file $CONFIGFILE
-test -z "$OMNIEVENTS_LOGDIR"  && OMNIEVENTS_LOGDIR=/var/lib/omniEvents
+test -z "$OMNIEVENTS_LOGDIR"  && OMNIEVENTS_LOGDIR=/var/log/omniEvents
 test -z "$OMNIEVENTS_PORT"    && OMNIEVENTS_PORT=11169
 OMNIEVENTS_PIDFILE=/var/run/$NAME.pid
 
