@@ -4,7 +4,7 @@
 
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
-Version: 2.7.2
+Version: 2.8.0
 Release: 1%{?dist}
 License: LGPL
 Group:   System/Libraries
@@ -207,6 +207,9 @@ fi
 %doc doc/omnievents* doc/*.html doc/doxygen
 
 %changelog
+* Fri Jul 21 2017 Ryan Bauman <rbauman@lgsinnovations.com> - 2.8.0-1
+- Bump version for REDHAWK 2.1.1+
+
 * Tue Jan 10 2017 Ryan Bauman <rbauman@lgsinnovations.com> - 2.7.1-2
 - Change directory ownership to match what initscript actually uses
 - Use Requires instead of deprecated Prereq
