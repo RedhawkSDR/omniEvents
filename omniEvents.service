@@ -5,10 +5,11 @@ Requires=omniNames.service
 
 [Service]
 Type=forking
-PIDFile=/var/run/omniEvents.pid
+PermissionsStartOnly=true
 Environment=LOGDIR=/var/lib/omniEvents
 Environment=PORT=11169
 ExecStartPre=/bin/mkdir -p $LOGDIR
+ExecStartPre=/bin/chown -R omniORB $LOGDIR
 # Allow up to 5 seconds for the naming service to become reachable; fail if it is not
 ExecStartPre=/bin/bash -c "i=20; while ((i-- > 0)) && ! nameclt list > /dev/null 2>&1; do sleep 0.25; done; nameclt list > /dev/null 2>&1"
 ExecStart=/usr/sbin/omniEvents -l $LOGDIR -p $PORT -P /var/run/omniEvents.pid
