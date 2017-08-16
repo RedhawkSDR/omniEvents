@@ -4,8 +4,8 @@
 
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
-Version: 2.8.0
-Release: 2%{?dist}
+Version: 2.8.1
+Release: 1%{?dist}
 License: LGPL
 Group:   System/Libraries
 Source0: %{name}-%{version}.tar.gz
@@ -41,7 +41,7 @@ Event Service specification designed to work with omniORB.
 %package server
 Summary:   CORBA Event Service daemon
 Group:     Development/C++
-Requires:  omniORB-servers
+Requires(pre):  omniORB-servers
 Requires: %{lib_name} = %{version}-%{release}
 
 %description server
@@ -104,7 +104,7 @@ install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{_sysconfdir}/default
 %endif
 install -d %{buildroot}%{_mandir}/{man1,man8}
-install -d -m 755 %{buildroot}%{_sharedstatedir}/omniEvents
+install -d -m 755 %{buildroot}%{_localstatedir}/log/omniEvents
 
 %{?makeinstall_std:%makeinstall_std}%{!?makeinstall_std:make DESTDIR=%{buildroot} install}
 
@@ -177,7 +177,7 @@ fi
 
 %files server
 %defattr (-,root,root)
-%dir %attr(755,root,root) %{_sharedstatedir}/omniEvents
+%dir %attr(755,omniORB,root) %{_localstatedir}/log/omniEvents
 %attr(755,root,root) %{_sbindir}/omniEvents
 %attr(644,root,man) %{_mandir}/man8/*
 
