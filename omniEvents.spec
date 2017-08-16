@@ -41,7 +41,7 @@ Event Service specification designed to work with omniORB.
 %package server
 Summary:   CORBA Event Service daemon
 Group:     Development/C++
-Requires:  omniORB-servers
+Requires(pre):  omniORB-servers
 Requires: %{lib_name} = %{version}-%{release}
 
 %description server
@@ -177,7 +177,7 @@ fi
 
 %files server
 %defattr (-,root,root)
-%dir %attr(755,root,root) %{_sharedstatedir}/omniEvents
+%dir %attr(755,omniORB,root) %{_sharedstatedir}/omniEvents
 %attr(755,root,root) %{_sbindir}/omniEvents
 %attr(644,root,man) %{_mandir}/man8/*
 
