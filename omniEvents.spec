@@ -4,7 +4,7 @@
 
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
-Version: 2.8.1
+Version: 2.8.2
 Release: 1%{?dist}
 License: LGPL
 Group:   System/Libraries
@@ -117,6 +117,8 @@ install -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}
 install -m 775 etc/init.d/omniorb-eventservice %{buildroot}%{_initrddir}/omniEvents
 install -m 644 etc/default/omniorb-eventservice %{buildroot}%{_sysconfdir}/default
 %endif
+install -d %{buildroot}%{_sysconfdir}/security/limits.d
+install -m 644 etc/security/limits.d/99-omni-limits.conf %{buildroot}%{_sysconfdir}/security/limits.d
 install -m 644 doc/man/*.1 %{buildroot}%{_mandir}/man1
 install -m 644 doc/man/omniEvents.8 %{buildroot}%{_mandir}/man8
 
@@ -175,11 +177,13 @@ fi
 %{_libdir}/*.so.*
 %{_datadir}/idl/omniEvents
 
+
 %files server
 %defattr (-,root,root)
 %dir %attr(755,omniORB,root) %{_localstatedir}/log/omniEvents
 %attr(755,root,root) %{_sbindir}/omniEvents
 %attr(644,root,man) %{_mandir}/man8/*
+%attr(664,root,root) %{_sysconfdir}/security/limits.d/99-omni-limits.conf
 
 %files bootscripts
 %defattr (-,root,root)

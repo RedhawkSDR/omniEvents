@@ -15,6 +15,8 @@ ExecStartPre=/bin/bash -c "i=20; while ((i-- > 0)) && ! nameclt list > /dev/null
 ExecStart=/usr/sbin/omniEvents -l $LOGDIR -p $PORT -P /var/run/omniEvents.pid
 User=omniORB
 Group=omniORB
+LimitNPROC=65536
+LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target
