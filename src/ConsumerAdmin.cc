@@ -149,7 +149,6 @@ void ConsumerAdmin_i::output(ostream& os)
 {
   if(_pushSupplier)
   {
-    omni_mutex_lock l(_pushSupplier->_lock);
     _pushSupplier->output(os);
   }
   if(_pullSupplier)
