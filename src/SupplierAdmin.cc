@@ -167,8 +167,17 @@ void SupplierAdmin_i::reincarnate(const PersistNode& node)
 
 void SupplierAdmin_i::output(ostream& os)
 {
-  if(_pushConsumer)
-     _pushConsumer->output(os);
+    if(_pushConsumer) {
+        try {
+            _pushConsumer->output(os);
+        }
+        catch (CORBA::Exception& ex) {
+            DB(1,"SupplierAdmin::output CORBA exception"
+               IF_OMNIORB4(": "<<ex._name()<<) ".");
+        }
+
+    }
+
   if(_pullConsumer)
      _pullConsumer->output(os);
 }
