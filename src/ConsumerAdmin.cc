@@ -149,8 +149,13 @@ void ConsumerAdmin_i::output(ostream& os)
 {
   if(_pushSupplier)
   {
-    omni_mutex_lock l(_pushSupplier->_lock);
-    _pushSupplier->output(os);
+    try {
+        _pushSupplier->output(os);
+    }
+    catch (CORBA::Exception& ex) {
+        DB(1,"ConsumerAdmin::output CORBA exception"
+           IF_OMNIORB4(": "<<ex._name()<<) ".");
+    }
   }
   if(_pullSupplier)
   {
