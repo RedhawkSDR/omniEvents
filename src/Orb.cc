@@ -219,6 +219,60 @@ void Orb::deferredRequest(CORBA::Request_ptr req, Callback* callback)
 
 void Orb::reportObjectFailure(
   const char*       here,
+  const std::string &sior,
+  omniIOR *ior,
+  CORBA::Exception* ex
+)
+{
+#ifdef HAVE_OMNIORB4
+    if ( ior != 0 ) 
+  {
+    // Hack! The '!' signals object failure.
+    // See DaemonImpl::log() in daemon_unix.cc.
+    omniORB::logger log("omniEvents! Object failure: ");
+    // Log Repository ID.
+    log<<ior->repositoryID();
+    // Log Object ID. (Limitation: only display the first TAG_INTERNET_IOP)
+    for(CORBA::ULong i=0; i<ior->iopProfiles().length(); i++)
+    {
+      if (ior->iopProfiles()[i].tag == IOP::TAG_INTERNET_IOP)
+      {
+        IIOP::ProfileBody pBody;
+        IIOP::unmarshalProfile(ior->iopProfiles()[i],pBody);
+        log<<" \"";
+        for(CORBA::ULong j=0; j<pBody.object_key.length(); ++j)
+        {
+          char c=(char)pBody.object_key[j];
+          log<<( (c>=' '&&c<='~')? c: '.' ); // Log object key as text
+        }
+        log<<"\" at "<<(const char*)pBody.address.host<<":"<<pBody.address.port;
+        break; // ONLY DISPLAY FIRST!
+      }
+    }
+    // Log exception.
+    if(!ex)
+    {
+      log<<" threw unknown exception\n";
+    }
+    else
+    {
+      log<<" threw "<<ex->_name();
+      CORBA::SystemException* sysex =CORBA::SystemException::_downcast(ex);
+      if(sysex)
+          log<<" ("<<NP_MINORSTRING(*sysex)<<")";
+      log<<"\n";
+    }
+  }
+#endif
+  {
+    omniORB::logger log("omniEvents! Object failure detail: ");
+    log<<sior.c_str()<<" at "<<here<<"\n";
+  }
+}
+
+
+void Orb::reportObjectFailure(
+  const char*       here,
   CORBA::Object_ptr obj,
   CORBA::Exception* ex
 )
@@ -229,7 +283,7 @@ void Orb::reportObjectFailure(
     // Hack! The '!' signals object failure.
     // See DaemonImpl::log() in daemon_unix.cc.
     omniORB::logger log("omniEvents! Object failure: ");
-    omniIOR* ior =obj->_PR_getobj()->_getIOR();
+    omniIOR_var ior =obj->_PR_getobj()->_getIOR();
     // Log Repository ID.
     log<<ior->repositoryID();
     // Log Object ID. (Limitation: only display the first TAG_INTERNET_IOP)

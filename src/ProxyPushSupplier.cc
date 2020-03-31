@@ -255,6 +255,11 @@ void ProxyPushSupplier_i::connect_push_consumer(
   if(!CORBA::is_nil(_target) || !CORBA::is_nil(_req))
       throw CosEventChannelAdmin::AlreadyConnected();
   _target=CosEventComm::PushConsumer::_duplicate(pushConsumer);
+  {
+      CORBA::String_var _ior = Orb::inst()._orb->object_to_string(_target.in());
+      _target_sior=static_cast<const char*>(_ior);
+      _target_ior=_target.in()->_PR_getobj()->_getIOR();                                              
+  }
 
   // Test to see whether pushSupplier is a ProxyPushSupplier.
   // If so, then we will aggressively try to reconnect, when we are reincarnated
@@ -335,7 +340,11 @@ inline void ProxyPushSupplier_i::trigger(bool& busy, bool& waiting)
       // Shut down the connection
       DB(10,"ProxyPushSupplier got exception" IF_OMNIORB4(": "<<ex._name()) );
       if (!CORBA::is_nil(_target)) {
-        Orb::inst().reportObjectFailure(HERE,_target.in(),&ex);
+        Orb::inst().reportObjectFailure(HERE,
+                                        _target_sior,
+                                       _target_ior,
+                                        &ex);                                        
+
         _req=CORBA::Request::_nil();
 
         // Try to notify the Consumer that the connection is closing.
@@ -438,7 +447,7 @@ void ProxyPushSupplier_i::output(ostream &os)
 {
   basicOutput(
     os,"ConsumerAdmin/ProxyPushSupplier",
-    _target.in(),
+    _target_sior,
     _targetIsProxy? " proxy=1": NULL
   );
 }

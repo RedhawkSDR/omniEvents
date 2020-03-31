@@ -123,6 +123,8 @@ public:
   void output(ostream &os);
 private:
   CosEventComm::PushConsumer_var _target;
+  std::string                    _target_sior;
+  omniIOR_var                    _target_ior;
   bool _targetIsProxy; ///< TRUE if _target is a ProxyPushConsumer.
 };
 

@@ -216,5 +216,20 @@ void Proxy::basicOutput(
   os<<" ;;\n";
 }
 
+void Proxy::basicOutput(
+  ostream&          os,
+  const char*       name,
+  const std::string &iorstr,
+  const char*       extraAttributes
+)
+{
+  keyOutput(os,name);
+  os<<" IOR="<<iorstr;
+  if(extraAttributes)
+      os<<extraAttributes;
+  os<<" ;;\n";
+}
+    
+
 
 }; // end namespace OmniEvents

@@ -341,6 +341,9 @@ ProxyPushConsumer_i::Connection::Connection(
   ++_objectCount;
   DB(21,"ProxyPushConsumer_i::Connection::Connection() count="<<_objectCount)
 #endif
+      CORBA::String_var _iorstr;
+  _iorstr = Orb::inst()._orb->object_to_string(_target.in());  
+  _target_sior=static_cast<const char*>(_iorstr);
 }
 
 ProxyPushConsumer_i::Connection::~Connection()
@@ -379,14 +382,9 @@ void ProxyPushConsumer_i::Connection::output(ostream& os) const
   os<<"ecf/"<<_channelName;
   os<<"/SupplierAdmin/ProxyPushConsumer/"<<_oidstr;
 
-  if(!CORBA::is_nil(_target.in()))
-  {
-    CORBA::String_var iorstr;
-    iorstr = Orb::inst()._orb->object_to_string(_target.in());
-    os<<" IOR="<<iorstr.in();
-    if(_targetIsProxy)
-        os<<" proxy=1";
-  }
+  os<<" IOR="<<_target_sior;
+  if(_targetIsProxy)
+      os<<" proxy=1";
   os<<" ;;\n";
 }
 

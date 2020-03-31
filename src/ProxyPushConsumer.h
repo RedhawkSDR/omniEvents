@@ -108,6 +108,7 @@ private:
     const char*                    _channelName;
     string                         _oidstr;
     CosEventComm::PushSupplier_var _target;
+    std::string                    _target_sior;
     bool _targetIsProxy; ///< TRUE if _target is a ProxyPushSupplier
 
     /** Constructor adopts 'pushSupplier' parameter. */

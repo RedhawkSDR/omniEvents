@@ -1,3 +1,4 @@
+
 //                            Package   : omniEvents
 // Orb.h                      Created   : 2003/12/04
 //                            Author    : Alex Tingle
@@ -59,6 +60,7 @@
 
 #ifdef HAVE_STD_STL
 using namespace std;
+#include <string>
 #endif
 
 namespace OmniEvents {
@@ -119,6 +121,13 @@ public:
     CORBA::Object_ptr obj,
     CORBA::Exception* ex
   );
+  void reportObjectFailure(
+    const char*       here,
+    const std::string &iorstr,
+    omniIOR          *ior,
+    CORBA::Exception* ex
+  );
+  
 
   /** Sets _shutdownRequested. The parameter is ignored.
    * This method may be used as a signal handler.

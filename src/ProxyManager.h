@@ -124,6 +124,13 @@ protected:
     CORBA::Object_ptr target=CORBA::Object::_nil(),
     const char* extraAttributes=NULL
   );
+
+  void basicOutput(
+    ostream& os, const char* name,
+    const std::string &ior,
+    const char* extraAttributes=NULL
+  );
+  
  
   CORBA::Request_var _req;
 private:
