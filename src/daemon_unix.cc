@@ -285,7 +285,7 @@ void DaemonImpl::log(const char* message)
     }
   }
   // Send the message.
-  ::syslog(priority,message);
+  ::syslog(priority,"%s",message);
 #ifndef LOG_PERROR
   // If we don't have LOG_PERROR, then we'll have to manually send
   // log messages to stderr.
