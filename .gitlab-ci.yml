@@ -28,18 +28,6 @@
       - output/*/*.rpm
     expire_in: 2 days
 
-package:el6:
-  variables:
-    dist: el6
-    arch: x86_64
-  <<: *package
-
-package:el6-i386:
-  variables:
-    dist: el6
-    arch: i686
-  <<: *package
-
 package:el7:
   variables:
     dist: el7
@@ -56,18 +44,18 @@ deploy:
       fi
 
 .s3: &s3
-  image: ${docker_registry}utils/s3cmd:el6-createrepo
+  image: ${docker_registry}utils/s3cmd:el7-createrepo
   stage: deploy
   tags:
     - s3
   script:
-    - /usr/bin/s3cmd sync s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_SLUG/$dist/$arch .
+    - /usr/bin/s3cmd sync s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_NAME/$dist/$arch .
     - mkdir -p $arch
     - for file in `find output -name *.rpm`; do
         cp $file $arch;
       done
     - repomanage --keep=2 --old $arch| xargs rm -f; createrepo --update $arch
-    - /usr/bin/s3cmd sync -F -v --delete-removed $arch s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_SLUG/$dist/  && s3cmd setacl -v s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_SLUG/$dist --acl-public --recursive || true
+    - /usr/bin/s3cmd sync -F -v --delete-removed $arch s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_NAME/$dist/  && s3cmd setacl -v s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_NAME/$dist --acl-public --recursive || true
 
 deploy-el7:
   variables:
@@ -77,18 +65,3 @@ deploy-el7:
     - package:el7
   <<: *s3
 
-deploy-el6:
-  variables:
-    dist: el6
-    arch: x86_64
-  dependencies:
-    - package:el6
-  <<: *s3
-
-deploy-el6-i386:
-  variables:
-    dist: el6
-    arch: i686
-  dependencies:
-    - package:el6-i386
-  <<: *s3
