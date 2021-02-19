@@ -4,7 +4,7 @@
 
 Summary: CORBA Event Service for omniORB
 Name:    omniEvents
-Version: 2.8.4
+Version: 2.8.5
 Release: 1%{?dist}
 License: LGPL
 Group:   System/Libraries

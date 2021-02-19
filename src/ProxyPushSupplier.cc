@@ -335,6 +335,9 @@ inline void ProxyPushSupplier_i::trigger(bool& busy, bool& waiting)
         ex->_raise();
       }
     }
+    catch(CORBA::TIMEOUT& ex) {
+      // client might have timed out just pass through
+    }
     catch(CORBA::Exception& ex)
     {
       // Shut down the connection
