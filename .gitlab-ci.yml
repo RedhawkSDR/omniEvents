@@ -1,5 +1,5 @@
 .package: &package
-image: ${docker_registry}redhawk/alpine-dockerd-plus-utils
+  image: ${docker_registry}redhawk/alpine-dockerd-plus-utils
   stage: build
   tags:
     - docker
